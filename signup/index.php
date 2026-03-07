@@ -8,10 +8,8 @@
     </head>
 
     <body>
+        <?php include '../nav.php'; ?>
         <div class="body-container">
-            <?php include '../nav.php'; ?>
-
-
             <div class="center-container">
                 <h1>Sign up</h1>
                 <form action="/action_page.php" method="post" target="_blank">

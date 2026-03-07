@@ -8,8 +8,9 @@
     </head>
 
     <body>
+        <?php include './nav.php'; ?>
         <div class="body-container">
-            <?php include './nav.php'; ?>
+
             <h1>Home</h1>
             <p>This application allows you to log, respond to, categorise, and manage issues.
             <br> Users can log new issues, view previously submitted issues, and add comments to existing issues.<br>

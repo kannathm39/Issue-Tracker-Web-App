@@ -8,9 +8,8 @@
     </head>
 
     <body>
+        <?php include '../nav.php'; ?>
         <div class="body-container">
-            <?php include '../nav.php'; ?>
-
 
             <div class="center-container">
                 <h1>Log in</h1>
