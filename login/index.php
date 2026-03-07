@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Login</title>
+        <link href="../style.css" media="all" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="body-container">
+            <?php include '../nav.php'; ?>
+
+
+            <div class="center-container">
+                <h1>Log in</h1>
+                <form action="/action_page.php" method="post" target="_blank">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username"><br>
+                    <label for="password">Password:</label>
+                    <input type="text" id="password" name="password"><br><br>
+
+                    <input type="submit" value="Submit">
+                </form>
+
+                <br>
+                <div>
+                    <span>Don't have an account? <a href="http://localhost:9090/signup/index.php">Sign up now.</a></span>
+                </div>
+
+            </div>
+            <br>
+
+        </div>
+
+        <?php include '../footer.php'; ?>
+    </body>
+
+</html>
