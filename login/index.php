@@ -13,11 +13,11 @@
 
             <div class="center-container">
                 <h1>Log in</h1>
-                <form action="/action_page.php" method="post" target="_blank">
+                <form action="/index.php" method="post" target="_blank">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username"><br>
+                    <input type="text" id="username" name="username" maxlength="20" required><br>
                     <label for="password">Password:</label>
-                    <input type="text" id="password" name="password"><br><br>
+                    <input type="text" id="password" name="password" maxlength="25" required><br><br>
 
                     <input type="submit" value="Submit">
                 </form>
