@@ -1,7 +1,7 @@
 <nav>
-    <ul>
+    <ul class="nav-bar">
         <li><a href="http://localhost:9090/index.php">Home</a></li>
-        <li><a href="#news">News</a></li>
+        <li><a href="#">News</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="#docs">Documentation</a></li>
         <li><a href="#faq">FAQ</a></li>
@@ -20,4 +20,12 @@
             </div>
         </li>
     </ul>
+    <?php
+    if ($loggedIn) {
+        echo '<ul class="issue-menu">';
+        echo '<li><a href="http://localhost:9090/create-issue/index.php">Create issue</a></li>';
+        echo '<li><a href="#">My issues</a></li>';
+        echo '</ul>';
+    }
+    ?>
 </nav>

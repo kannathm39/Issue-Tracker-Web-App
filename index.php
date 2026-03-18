@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+      +6*--6-  <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Home</title>
         <link href="/style.css" media="all" rel="stylesheet">
     </head>

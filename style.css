@@ -6,7 +6,7 @@ body {
     text-align:center;
 }
 
-ul {
+.nav-bar {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -15,6 +15,18 @@ ul {
     top: 0;
     left: 0;
     background: linear-gradient(90deg,rgba(72, 61, 139, 1) 0%, rgba(87, 124, 199, 1) 50%, rgba(193, 83, 237, 1) 100%);
+}
+
+.issue-menu {
+    list-style-type: none;
+    margin:0;
+    padding:50px;
+    height:0;
+    width:100%;
+    top:0;
+    left:0;
+    font-size: 15px;
+    background: grey;
 }
 
 ul li {
@@ -95,5 +107,6 @@ li.dropdown {
 
 @media screen and (max-width: 600px) {
     ul li {float:none};
+    .issue-menu {padding-top:300px};
     .body-container {padding-top:300px};
 }

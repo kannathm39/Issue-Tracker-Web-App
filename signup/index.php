@@ -22,7 +22,7 @@
                     <label for="email">Email address:</label>
                     <input type="text" id="email" name="email" minlength="5" maxlength="20" required><br><br>
                     <label for="password">Password:</label>
-                    <input type="text" id="password" name="password" minlength="8" maxlength="25" required><br>
+                    <input type="text" id="password" name="password" minlength="8" maxlength="25" pattern="?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}" title="Password must have a minimum of 12 characters, one uppercase, one lowercase, one digit and one special character." required><br>
                     <label for="passwordconf">Confirm password:</label>
                     <input type="text" id="passwordconf" name="passwordconf" minlength="8" maxlength="25" required>
 
@@ -50,7 +50,12 @@
                     if (strlen($_POST['password']) >= 8 && strlen($_POST['username']) <= 25) {
                         //Password match
                         if (strlen($_POST['password']) == strlen($_POST['passwordconf'])) {
-                            //password length, password match, password requirements
+                            //Password requirements
+                            if (preg_match('/(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}/', $_POST('password')) == true) {
+                                //All good
+                            } else {
+                                echo '<div role="alert">Your password is invalid.</div>';
+                            }
                         } else {
                             echo '<div role="alert">Passwords do not match.</div>';
                         }
