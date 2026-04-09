@@ -1,5 +1,6 @@
 body {
     background-color: #d8d8d8;
+    font-family: Arial, sans-serif;
 }
 
 .center-container {
@@ -103,6 +104,65 @@ li.dropdown {
 
 .text-muted {
     color: dimgrey;
+}
+
+form {
+    border-radius: 5px;
+    background-color: #aeaeff;
+    padding: 20px;
+}
+
+label {
+    display:block;
+}
+
+input[type=text], [type=password], [type=email], textarea, select {
+    width: 50%;
+    padding: 12px;
+    margin: 8px 0;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 30%;
+    background-color: #8000ff;
+    color: white;
+    padding: 14px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #ab89ff;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+}
+
+td, th {
+    border: 1px solid #000000;
+    padding: 8px;
+    background-color: white;
+}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #6a3ad7;
+    color: white;
+}
+
+tr .highlightcolumn {
+    background-color: #b4bbff;
 }
 
 @media screen and (max-width: 600px) {

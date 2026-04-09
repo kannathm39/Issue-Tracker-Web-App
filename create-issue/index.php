@@ -1,3 +1,27 @@
+<?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php');
+$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv->load();
+
+$hostname = $_ENV['DB_HOST'];
+$database = $_ENV['DB_NAME'];
+$usernameSelect = $_ENV['DB_INSERT_USERNAME'];
+$passwordSelect = $_ENV['DB_INSERT_PASSWORD'];
+
+//Fake USER ID for now
+$user_id = 1;
+
+// Create connection
+$conn = null;
+try {
+    $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+}
+catch (Exception $e) {
+    echo "Connection failed: " . $e->getMessage();
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,19 +36,44 @@
         <div class="body-container">
             <div>
                 <h1>Create Issue</h1>
-                <form action="./index.php" method="post" target="_self">
-                    <label for="title">Title:</label>
+                <form action="" method="post" target="_self">
+                    <label for="title">Title</label>
                     <input type="text" id="title" name="title" minlength="8" maxlength="20" required><br><br>
                     <label for="category">Category</label>
                     <input type="text" id="category" name="category" required><br><br>
                     <label for="description"> Issue Description</label>
-                    <input type="text" id="description" name="description" required><br><br>
-                    <input type="submit" value="Submit">
+                    <textarea id="description" name="description" rows="5" cols="50"></textarea><br><br>
+                    <input type="submit" name="submit" value="Submit">
                 </form>
             </div>
             <br>
 
+            <?php
+            //Checks if submit has been clicked in the form
+            if(isset($_POST['submit'])){
+                echo "Is this working";
+                //Get values we want to insert
+                $issuetitle = $_POST['title'];
+                $issuecategory = $_POST['category'];
+                $issuedesc = $_POST['description'];
+
+                $stmt = $conn->prepare("INSERT INTO issues (title, category, description, user_id) VALUES (?, ?, ?, ?)");
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssii", $issuetitle, $issuecategory, $issuedesc, $user_id);
+                if($stmt->execute()){
+                    echo "Issue created successfully!";
+                    //You can add any type of message here for your user.
+                } else {
+                    echo "An error occurred";
+                }
+            }
+
+            $conn->close();
+            ?>
+
+
         </div>
+
         <?php include '../footer.php'; ?>
     </body>
 

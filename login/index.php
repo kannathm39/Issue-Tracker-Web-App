@@ -17,7 +17,7 @@
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" maxlength="20" required><br>
                     <label for="password">Password:</label>
-                    <input type="text" id="password" name="password" maxlength="25" required><br><br>
+                    <input type="password" id="password" name="password" maxlength="25" required><br><br>
 
                     <input type="submit" value="Submit">
                 </form>

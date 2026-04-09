@@ -1,8 +1,8 @@
 <nav>
     <ul class="nav-bar">
         <li><a href="http://localhost:9090/index.php">Home</a></li>
-        <li><a href="#">News</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="http://localhost:9090/create-issue/index.php">Create Issue</a></li>
+        <li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>
         <li><a href="#docs">Documentation</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li class="dropdown" style="float:right">

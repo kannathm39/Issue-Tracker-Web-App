@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -20,11 +21,11 @@
                     <label for="lname">Last name:</label>
                     <input type="text" id="lname" name="lname" minlength="1" maxlength="20" required><br><br>
                     <label for="email">Email address:</label>
-                    <input type="text" id="email" name="email" minlength="5" maxlength="20" required><br><br>
+                    <input type="email" id="email" name="email" minlength="5" maxlength="20" required><br><br>
                     <label for="password">Password:</label>
-                    <input type="text" id="password" name="password" minlength="8" maxlength="25" pattern="?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}" title="Password must have a minimum of 12 characters, one uppercase, one lowercase, one digit and one special character." required><br>
+                    <input type="password" id="password" name="password" minlength="8" maxlength="25" pattern="?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}" title="Password must have a minimum of 12 characters, one uppercase, one lowercase, one digit and one special character." required><br>
                     <label for="passwordconf">Confirm password:</label>
-                    <input type="text" id="passwordconf" name="passwordconf" minlength="8" maxlength="25" required>
+                    <input type="password" id="passwordconf" name="passwordconf" minlength="8" maxlength="25" required><br><br>
 
                     <input type="submit" value="Submit">
                 </form>
