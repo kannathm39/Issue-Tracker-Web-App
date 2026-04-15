@@ -48,29 +48,32 @@ catch (Exception $e) {
             </div>
             <br>
 
+            <!--Inserting issue into issue table-->
             <?php
-            //Checks if submit has been clicked in the form
-            if(isset($_POST['submit'])){
-                echo "Is this working";
-                //Get values we want to insert
-                $issuetitle = $_POST['title'];
-                $issuecategory = $_POST['category'];
-                $issuedesc = $_POST['description'];
+            $issuetitle = "Test title";
+            $issuecategory = "Test category";
+            $issuedesc = "Test description";
 
-                $stmt = $conn->prepare("INSERT INTO issues (title, category, description, user_id) VALUES (?, ?, ?, ?)");
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssii", $issuetitle, $issuecategory, $issuedesc, $user_id);
-                if($stmt->execute()){
-                    echo "Issue created successfully!";
-                    //You can add any type of message here for your user.
+            //Get values we want to insert
+            $issuetitle = $_POST['title'];
+            $issuecategory = $_POST['category'];
+            $issuedesc = $_POST['description'];
+
+            echo "Is this working?";
+            if(isset($_POST['submit'])) {
+                $sql = "INSERT INTO `issues` (`issue_id`, `title`, `category`, `description`, `user_id`, `admin_uid`, `status`, `timestamp`) VALUES (NULL, '$issuetitle', '$issuecategory', '$issuedesc', '$user_id', '000000', 'Ongoing', CURRENT_TIMESTAMP(6));";
+                //$sql = "INSERT INTO issues (title, category, description, user_id) VALUES ('Test Title', 'Test Category', 'Test Description', '111111')";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "New record created successfully!";
                 } else {
-                    echo "An error occurred";
+                    echo "Error: " . $sql . "<br>" . $conn->error;
                 }
+
             }
 
             $conn->close();
             ?>
-
 
         </div>
 

@@ -36,6 +36,7 @@ catch (Exception $e) {
         <div class="body-container">
             <div>
                 <h1>My Issues</h1>
+                <p>View and edit your issues here.</p>
             </div>
             <br>
 
@@ -52,6 +53,7 @@ catch (Exception $e) {
             $table_content .= "<th>Assigned Admin</th>";
             $table_content .= "<th>Status</th>";
             $table_content .= "<th>Timestamp</th>";
+            $table_content .= "<th></th>";
             $table_content .= "</tr>";
 
             // SELECT * FROM table and print the result
@@ -68,6 +70,7 @@ catch (Exception $e) {
                     $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
                     $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
                     $table_content .= "<td>" . htmlspecialchars($row["timestamp"]) . "</td>";
+                    $table_content .= "<td><button>Edit</button></td>";
                     $table_content .= "</tr>";
                 }
             } else {

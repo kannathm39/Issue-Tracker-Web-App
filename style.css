@@ -165,6 +165,14 @@ tr .highlightcolumn {
     background-color: #b4bbff;
 }
 
+.alert {
+    color: #b31919;
+    border: 1px solid #b01414;
+    background-color: #ffb2b2;
+    padding:15px;
+    border-radius: 4px;
+}
+
 @media screen and (max-width: 600px) {
     ul li {float:none};
     .issue-menu {padding-top:300px};
