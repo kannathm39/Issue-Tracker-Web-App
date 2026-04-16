@@ -36,7 +36,7 @@ catch (Exception $e) {
         <div class="body-container">
             <div>
                 <h1>Create Issue</h1>
-                <form action="" method="post" target="_self">
+                <form action="" method="post" target="_self" class="form-db">
                     <label for="title">Title</label>
                     <input type="text" id="title" name="title" minlength="8" maxlength="20" required><br><br>
                     <label for="category">Category</label>

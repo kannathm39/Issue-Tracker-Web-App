@@ -11,6 +11,9 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
 //Fake USER ID for now
 $user_id = 1;
 
+//Issue ID
+$current_issue = 3;
+
 // Create connection
 $conn = null;
 try {
@@ -20,6 +23,10 @@ catch (Exception $e) {
     echo "Connection failed: " . $e->getMessage();
     exit();
 }
+
+//Get title
+$sql = "SELECT title FROM issues WHERE issue_id = " . $current_issue;
+$title = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +34,7 @@ catch (Exception $e) {
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Create issue</title>
+        <title>Manage issue</title>
         <link href="../style.css" media="all" rel="stylesheet">
     </head>
 
@@ -35,7 +42,7 @@ catch (Exception $e) {
         <?php include '../nav.php'; ?>
         <div class="body-container">
             <div>
-                <h1>My Issues</h1>
+                <h1>My Issues >> <span id="issuetitle" style="color:#9f89f1">Mouse issue</span></h1>
                 <p>View and edit your issues here.</p>
             </div>
             <br>
@@ -57,13 +64,13 @@ catch (Exception $e) {
                 $table_content .= "</tr>";
 
                 // SELECT * FROM table and print the result
-                $sql = "SELECT * FROM issues";
+                $sql = "SELECT * FROM issues WHERE issue_id = " . $current_issue;
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $table_content .= "<tr>";
                         $table_content .= "<td>" . htmlspecialchars($row["issue_id"]) . "</td>";
-                        $table_content .= "<td><a href='manage.php'>" . htmlspecialchars($row["title"]) . "</a></td>";
+                        $table_content .= "<td>" . htmlspecialchars($row["title"]) . "</td>";
                         $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
                         $table_content .= "<td>" . htmlspecialchars($row["description"]) . "</td>";
                         $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";

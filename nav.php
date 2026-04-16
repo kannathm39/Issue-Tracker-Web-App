@@ -1,4 +1,5 @@
 <nav>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.png">
     <ul class="nav-bar">
         <li><a href="http://localhost:9090/index.php">Home</a></li>
         <li><a href="http://localhost:9090/create-issue/index.php">Create Issue</a></li>

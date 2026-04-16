@@ -63,21 +63,24 @@
 
                 ?>
                 <br>
-                <form action="./index.php" method="post" target="_self">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" minlength="8" maxlength="20" required value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES) : ''; ?>"><br><br>
-                    <label for="fname">First name:</label>
-                    <input type="text" id="fname" name="fname" minlength="1" maxlength="20" required value="<?php echo isset($_POST['fname']) ? htmlspecialchars($_POST['fname'], ENT_QUOTES) : ''; ?>"><br>
-                    <label for="lname">Last name:</label>
-                    <input type="text" id="lname" name="lname" minlength="1" maxlength="20" required value="<?php echo isset($_POST['lname']) ? htmlspecialchars($_POST['lname'], ENT_QUOTES) : ''; ?>"><br><br>
-                    <label for="email">Email address:</label>
-                    <input type="email" id="email" name="email" minlength="5" maxlength="20" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES) : ''; ?>"><br><br>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" minlength="8" maxlength="25" pattern="?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}" title="Password must have a minimum of 12 characters, one uppercase, one lowercase, one digit and one special character." required value="<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password'], ENT_QUOTES) : ''; ?>"><br>
-                    <label for="passwordconf">Confirm password:</label>
-                    <input type="password" id="passwordconf" name="passwordconf" minlength="8" maxlength="25" required value="<?php echo isset($_POST['passwordconf']) ? htmlspecialchars($_POST['passwordconf'], ENT_QUOTES) : ''; ?>"><br><br>
 
-                    <input type="submit" value="Submit">
+                <form action="./index.php" method="post" target="_self" class="form-log">
+                    <div class="form-container">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" minlength="8" maxlength="20" required value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES) : ''; ?>"><br><br>
+                        <label for="fname">First name:</label>
+                        <input type="text" id="fname" name="fname" minlength="1" maxlength="20" required value="<?php echo isset($_POST['fname']) ? htmlspecialchars($_POST['fname'], ENT_QUOTES) : ''; ?>"><br><br>
+                        <label for="lname">Last name:</label>
+                        <input type="text" id="lname" name="lname" minlength="1" maxlength="20" required value="<?php echo isset($_POST['lname']) ? htmlspecialchars($_POST['lname'], ENT_QUOTES) : ''; ?>"><br><br>
+                        <label for="email">Email address:</label>
+                        <input type="email" id="email" name="email" minlength="5" maxlength="20" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES) : ''; ?>"><br><br>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" minlength="8" maxlength="25" pattern="?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}" title="Password must have a minimum of 12 characters, one uppercase, one lowercase, one digit and one special character." required value="<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password'], ENT_QUOTES) : ''; ?>"><br><br>
+                        <label for="passwordconf">Confirm password:</label>
+                        <input type="password" id="passwordconf" name="passwordconf" minlength="8" maxlength="25" required value="<?php echo isset($_POST['passwordconf']) ? htmlspecialchars($_POST['passwordconf'], ENT_QUOTES) : ''; ?>"><br><br>
+
+                        <input type="submit" value="Submit">
+                    </div>
                 </form>
 
 

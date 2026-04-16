@@ -109,16 +109,30 @@ li.dropdown {
 form {
     border-radius: 5px;
     background-color: #aeaeff;
-    padding: 20px;
+    padding: 30px;
+    width:50%;
+}
+
+.form-log {
+    margin-left:auto;
+    margin-right:auto;
 }
 
 label {
     display:block;
+    text-align: left;
+}
+
+.form-container {
+    width:70%;
+    margin-left: auto;
+    margin-right: auto;
+    /*background-color:yellow;*/
 }
 
 input[type=text], [type=password], [type=email], textarea, select {
-    width: 50%;
     padding: 12px;
+    width:100%;
     margin: 8px 0;
     font-family: Arial, sans-serif;
     font-size: 15px;
@@ -136,22 +150,29 @@ input[type=submit] {
     margin: 8px 0;
     border: none;
     cursor: pointer;
+    border-radius:3px;
 }
 
 input[type=submit]:hover {
     background-color: #ab89ff;
 }
 
+.table-container {
+    overflow-x: auto;
+}
+/*
 table {
     border-collapse: collapse;
     width: 100%;
     text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 td, th {
     border: 1px solid #000000;
     padding: 8px;
     background-color: white;
+    padding: 12px 15px;
 }
 
 th {
@@ -164,6 +185,45 @@ th {
 tr .highlightcolumn {
     background-color: #b4bbff;
 }
+
+tr:nth-child(even) {
+    background-color: grey;
+}*/
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+td button {
+    background-color: #aeaeff;
+    color: black;
+    padding: 14px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+td button:hover {background-color: #dbbaff;}
+
+tr:nth-child(even){background-color: #f2f2f2;}
+
+tr:hover {background-color: #e6e1f8;}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #6a3ad7;
+    color: white;
+}
+
 
 .alert {
     color: #b31919;
