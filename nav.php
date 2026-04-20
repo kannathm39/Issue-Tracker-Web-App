@@ -2,31 +2,34 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.png">
     <ul class="nav-bar">
         <li><a href="http://localhost:9090/index.php">Home</a></li>
-        <li><a href="http://localhost:9090/create-issue/index.php">Create Issue</a></li>
-        <li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>
+        <?php
+        if (isset($_SESSION['user_id'])) {
+            echo '<li><a href="http://localhost:9090/create-issue/index.php">Create Issue</a></li>';
+            echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
+        }
+        ?>
         <li><a href="http://localhost:9090/docs/index.php">Documentation</a></li>
-        <!--<li><a href="http://localhost:9090/faq/index.php">FAQ</a></li>-->
+
         <li class="dropdown" style="float:right">
-            <a href="javascript:void(0)" class="dropbtn">Account</a>
+            <?php
+            if (isset($_SESSION['user_id'])) {
+                echo '<a href="javascript:void(0)" class="dropbtn">' . $_SESSION['firstname'] . '</a>';
+            } else {
+                echo '<a href="javascript:void(0)" class="dropbtn">Account</a>';
+            }
+            ?>
             <div class="dropdown-content">
                 <?php
-                $loggedIn = false;
-                if ($loggedIn) {
+                if (isset($_SESSION['user_id'])) {
                     echo '<a href="#">My Account</a>';
-                    echo '<a href="#">Logout</a>';
+                    echo '<a href="#">Settings</a>';
+                    echo '<a href="http://localhost:9090/logout.php">Logout</a>';
                 } else {
                     echo '<a href="http://localhost:9090/login/index.php">Login</a>';
+                    echo '<a href="http://localhost:9090/signup/index.php">Sign up</a>';
                 }
                 ?>
             </div>
         </li>
     </ul>
-    <?php
-    if ($loggedIn) {
-        echo '<ul class="issue-menu">';
-        echo '<li><a href="http://localhost:9090/create-issue/index.php">Create issue</a></li>';
-        echo '<li><a href="#">My issues</a></li>';
-        echo '</ul>';
-    }
-    ?>
 </nav>

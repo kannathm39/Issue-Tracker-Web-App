@@ -46,6 +46,11 @@ ul li a, .dropbtn {
     text-decoration: none;
 }
 
+.dropbtn {
+    min-width: 70px;
+    text-align: right;
+}
+
 ul li a:hover:not(.active), .dropdown:hover .dropbtn {
     background-color: rgba(233, 153, 248, 0.76);
 }
@@ -83,8 +88,6 @@ li.dropdown {
 
 /* Footer */
 .body-container {
-    min-height: 100%;
-    height:100%;
     width:80%;
     margin-left: auto;
     margin-right: auto;
@@ -229,6 +232,14 @@ th {
     color: #b31919;
     border: 1px solid #b01414;
     background-color: #ffb2b2;
+    padding:15px;
+    border-radius: 4px;
+}
+
+.g-alert {
+    color: #095502;
+    border: 1px solid #154008;
+    background-color: #a2deb9;
     padding:15px;
     border-radius: 4px;
 }
