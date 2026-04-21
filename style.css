@@ -116,6 +116,11 @@ form {
     width:50%;
 }
 
+.edit-button-form {
+    background-color: white;
+    padding: 0;
+}
+
 .form-log {
     margin-left:auto;
     margin-right:auto;
@@ -160,38 +165,25 @@ input[type=submit]:hover {
     background-color: #ab89ff;
 }
 
+input.edit-button {
+    background-color: #aeaeff;
+    color: black;
+    padding: 14px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;;
+}
+
+input.delete-button {
+    background-color: #a61a26;
+}
+
+input.edit-button:hover {background-color: #dbbaff;}
+
 .table-container {
     overflow-x: auto;
 }
-/*
-table {
-    border-collapse: collapse;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-
-td, th {
-    border: 1px solid #000000;
-    padding: 8px;
-    background-color: white;
-    padding: 12px 15px;
-}
-
-th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    background-color: #6a3ad7;
-    color: white;
-}
-
-tr .highlightcolumn {
-    background-color: #b4bbff;
-}
-
-tr:nth-child(even) {
-    background-color: grey;
-}*/
 
 table {
     border-collapse: collapse;
@@ -203,7 +195,17 @@ td, th {
     padding: 8px;
 }
 
-td button {
+.td-desc {
+    width:130px;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top:20%;
+    border: none;
+}
+
+button {
     background-color: #aeaeff;
     color: black;
     padding: 14px;
@@ -213,7 +215,7 @@ td button {
     border-radius: 3px;
 }
 
-td button:hover {background-color: #dbbaff;}
+button:hover {background-color: #dbbaff;}
 
 tr:nth-child(even){background-color: #f2f2f2;}
 
@@ -225,6 +227,10 @@ th {
     text-align: left;
     background-color: #6a3ad7;
     color: white;
+}
+
+.vertical-table th {
+    width:20%;
 }
 
 

@@ -46,12 +46,6 @@ catch (Exception $e) {
                 <?php
                 // Validate registered values
                 if (isset($_POST['username']) && isset($_POST['fname']) && isset($_POST['lname']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['passwordconf'])) {
-                    $username = $_POST['username'];
-                    $firstname = $_POST['fname'];
-                    $surname = $_POST['lname'];
-                    $email = $_POST['email'];
-                    $password = $_POST['password'];
-                    $password_conf = $_POST['passwordconf'];
 
                     //Username length
                     if (strlen($_POST['username']) >= 3 && strlen($_POST['username']) <= 20) {
@@ -70,33 +64,23 @@ catch (Exception $e) {
                                                 $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
                                                 //Insert into database
-                                                /*
-                                                $sql = "INSERT INTO `users` (`user_id`, `username`, `firstname`, `surname`, `email`, `password`, `is_deleted`) VALUES (NULL, '$username', '$firstname', '$surname', '$email', '$hashed_password', '0');";
-                                                if ($conn->query($sql) === TRUE) {
-                                                    echo '<div role="alert" class="g-alert">Account created successfully!</div>';
-                                                } else {
-                                                    console.log("error");
-                                                    echo '<div role="alert" class="alert">Something went wrong. Please try again.</div>';
-                                                }*/
-
                                                 $conn = null;
                                                 try {
                                                     $conn = new mysqli($hostname, $usernameInsert, $passwordInsert, $database);
+
+                                                    $username = $conn->real_escape_string($_POST['username']);
+                                                    $firstname = $conn->real_escape_string($_POST['fname']);
+                                                    $surname = $conn->real_escape_string($_POST['lname']);
+                                                    $email = $conn->real_escape_string($_POST['email']);
+
                                                     $sql = "INSERT INTO `users` (`user_id`, `username`, `firstname`, `surname`, `email`, `password`, `is_deleted`) VALUES (NULL, '$username', '$firstname', '$surname', '$email', '$hashed_password', '0');";
                                                     $stmt = $conn->prepare($sql);
                                                     $stmt->execute();
                                                     $stmt->close();
                                                     $conn->close();
-                                                    /*
-                                                    $sql = 'INSERT INTO users (username, firstname, surname, email, password) VALUES (?, ?, ?, ?, ?)';
-                                                    $stmt = $conn->prepare($sql);
-                                                    $stmt->bind_param('sssss', $_POST['username'], $_POST['firstname'], $_POST['surname'], $_POST['email'], $hashed_password);
-                                                    $stmt->execute();
-                                                    $stmt->close();
-                                                    $conn->close();
-                                                    */
+
                                                     echo '<div role="alert" class="g-alert">Account created successfully!</div>';
-                                                    /*exit();*/
+
                                                 } catch (mysqli_sql_exception $e) {
                                                     echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
                                                 }

@@ -45,15 +45,16 @@ catch (Exception $e) {
                 // Validate registered values
 
                 if (isset($_POST['username']) && isset($_POST['password'])) {
-                    $username = $_POST['username'];
-                    $password = $_POST['password'];
-
                     $conn = null;
                     try {
                         $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+
+                        $username = $conn->real_escape_string($_POST['username']);
+                        $password = $conn->real_escape_string($_POST['password']);
+
                         $sql = 'SELECT * FROM users WHERE username = ? AND is_deleted = 0';
                         $stmt = $conn->prepare($sql);
-                        $stmt->bind_param('s', $_POST['username']);
+                        $stmt->bind_param('s', $username);
                         $stmt->execute();
                         $result = $stmt->get_result();
                         $stmt->close();

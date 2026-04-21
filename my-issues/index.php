@@ -63,29 +63,40 @@ catch (Exception $e) {
                 $table_content .= "</tr>";
 
                 // SELECT * FROM table and print the result
-                $sql = "SELECT * FROM issues";
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        $table_content .= "<tr>";
-                        $table_content .= "<td>" . htmlspecialchars($row["issue_id"]) . "</td>";
-                        $table_content .= "<td><a href='manage.php'>" . htmlspecialchars($row["title"]) . "</a></td>";
-                        $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
-                        $table_content .= "<td>" . htmlspecialchars($row["description"]) . "</td>";
-                        $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
-                        $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
-                        $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
-                        $table_content .= "<td>" . htmlspecialchars($row["timestamp"]) . "</td>";
-                        $table_content .= "<td><button>Edit</button></td>";
-                        $table_content .= "</tr>";
-                    }
-                } else {
-                    echo "0 results";
-                }
-                $conn->close();
+                $conn = null;
+                try {
+                    $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                    $sql = 'SELECT * FROM issues WHERE user_id = ?';
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('i', $_SESSION['user_id']);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $stmt->close();
+                    $conn->close();
 
-                $table_content .= "</table>";
-                echo $table_content;
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $table_content .= "<tr>";
+                            $table_content .= "<td>" . htmlspecialchars($row["issue_id"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["title"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
+                            $table_content .= "<td class='td-desc'>" . htmlspecialchars($row["description"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["timestamp"]) . "</td>";
+                            $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
+                            $table_content .= "</tr>";
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+
+                    $table_content .= "</table><br>";
+                    echo $table_content;
+                } catch (mysqli_sql_exception $e) {
+                    echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                }
                 ?>
             </div>
 

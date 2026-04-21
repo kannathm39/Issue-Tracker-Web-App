@@ -11,16 +11,18 @@ $dotenv->load();
 
 $hostname = $_ENV['DB_HOST'];
 $database = $_ENV['DB_NAME'];
-$usernameSelect = $_ENV['DB_INSERT_USERNAME'];
-$passwordSelect = $_ENV['DB_INSERT_PASSWORD'];
+$usernameSelect = $_ENV['DB_SELECT_USERNAME'];
+$passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
+$usernameInsert = $_ENV['DB_INSERT_USERNAME'];
+$passwordInsert = $_ENV['DB_INSERT_PASSWORD'];
 
-//Fake USER ID for now
-$user_id = 1;
+//User ID
+$user_id = $_SESSION['user_id'];
 
 // Create connection
 $conn = null;
 try {
-    $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+    $conn = new mysqli($hostname, $usernameInsert, $passwordInsert, $database);
 }
 catch (Exception $e) {
     echo "Connection failed: " . $e->getMessage();
@@ -56,29 +58,27 @@ catch (Exception $e) {
 
             <!--Inserting issue into issue table-->
             <?php
-            $issuetitle = "Test title";
-            $issuecategory = "Test category";
-            $issuedesc = "Test description";
-
-            //Get values we want to insert
-            $issuetitle = $_POST['title'];
-            $issuecategory = $_POST['category'];
-            $issuedesc = $_POST['description'];
-
-            echo "Is this working?";
             if(isset($_POST['submit'])) {
-                $sql = "INSERT INTO `issues` (`issue_id`, `title`, `category`, `description`, `user_id`, `admin_uid`, `status`, `timestamp`) VALUES (NULL, '$issuetitle', '$issuecategory', '$issuedesc', '$user_id', '000000', 'Ongoing', CURRENT_TIMESTAMP(6));";
-                //$sql = "INSERT INTO issues (title, category, description, user_id) VALUES ('Test Title', 'Test Category', 'Test Description', '111111')";
+                $conn = null;
+                try {
+                    $conn = new mysqli($hostname, $usernameInsert, $passwordInsert, $database);
 
-                if ($conn->query($sql) === TRUE) {
+                    //Escape special characters
+                    $title = $conn->real_escape_string($_POST['title']);
+                    $category = $conn->real_escape_string($_POST['category']);
+                    $description = $conn->real_escape_string($_POST['description']);
+
+                    $sql = "INSERT INTO issues (issue_id, title, category, description, user_id, admin_uid, status, timestamp) VALUES (NULL, '$title', '$category', '$description', '$user_id', '000000', 'Ongoing', CURRENT_TIMESTAMP(6));";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+                    $stmt->close();
+                    $conn->close();
                     echo "New record created successfully!";
-                } else {
-                    echo "Error: " . $sql . "<br>" . $conn->error;
+
+                } catch (mysqli_sql_exception $e) {
+                    echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
                 }
-
             }
-
-            $conn->close();
             ?>
 
         </div>
