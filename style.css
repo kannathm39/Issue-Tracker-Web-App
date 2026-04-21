@@ -195,14 +195,11 @@ td, th {
     padding: 8px;
 }
 
-.td-desc {
+.truncate {
     width:130px;
     white-space: nowrap;
-    display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top:20%;
-    border: none;
 }
 
 button {

@@ -72,7 +72,8 @@ catch (Exception $e) {
                         $user_id = $row['user_id'];
                         $admin_uid = $row['admin_uid'];
                         $status = $row['status'];
-                        $timestamp = $row['timestamp'];
+                        $created_time = $row['created_time'];
+                        $last_updated = $row['last_updated'];
 
                         echo '<h1><a href="index.php">My Issues</a> >> <span style="color:#9f89f1">' . $title . '</span></h1>';
 
@@ -84,7 +85,8 @@ catch (Exception $e) {
                         echo '<tr><th>Description</th><td>' . $description . '</td></tr>';
                         echo '<tr><th>Assigned Admin</th><td>' . $admin_uid . '</td></tr>';
                         echo '<tr><th>Status</th><td>' . $status . '</td></tr>';
-                        echo '<tr><th>Timestamp</th><td>' . $timestamp . '</td></tr>';
+                        echo '<tr><th>Created Time</th><td>' . $created_time . '</td></tr>';
+                        echo '<tr><th>Last Updated</th><td>' . $last_updated . '</td></tr>';
                         echo '</table><br>';
 
                         //Show edit button
@@ -116,9 +118,9 @@ catch (Exception $e) {
                             $conn = null;
                             try {
                                 $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
-                                
 
-                                $sql = 'UPDATE issues SET title = ?, category = ?, description = ? WHERE issue_id = ? AND user_id = ?';
+
+                                $sql = 'UPDATE issues SET title = ?, category = ?, description = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ? AND user_id = ?';
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('sssii', $_POST['title'], $_POST['category'], $_POST['description'], $issue_id, $_SESSION['user_id']);
                                 $stmt->execute();
@@ -131,7 +133,7 @@ catch (Exception $e) {
                             }
                         }
 
-                        //Delete
+                        //Permanently Delete
                         if (isset($_POST['delete'])) {
                             $conn = null;
                             try {

@@ -58,7 +58,8 @@ catch (Exception $e) {
                 $table_content .= "<th>User ID</th>";
                 $table_content .= "<th>Assigned Admin</th>";
                 $table_content .= "<th>Status</th>";
-                $table_content .= "<th>Timestamp</th>";
+                $table_content .= "<th>Last Updated</th>";
+                $table_content .= "<th>Created Time</th>";
                 $table_content .= "<th></th>";
                 $table_content .= "</tr>";
 
@@ -80,11 +81,12 @@ catch (Exception $e) {
                             $table_content .= "<td>" . htmlspecialchars($row["issue_id"]) . "</td>";
                             $table_content .= "<td>" . htmlspecialchars($row["title"]) . "</td>";
                             $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
-                            $table_content .= "<td class='td-desc'>" . htmlspecialchars($row["description"]) . "</td>";
+                            $table_content .= "<td><div class='truncate'>" . htmlspecialchars($row["description"]) . "</div></td>";
                             $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
                             $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
                             $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
-                            $table_content .= "<td>" . htmlspecialchars($row["timestamp"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["last_updated"]) . "</td>";
+                            $table_content .= "<td>" . htmlspecialchars($row["created_time"]) . "</td>";
                             $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
                             $table_content .= "</tr>";
                         }

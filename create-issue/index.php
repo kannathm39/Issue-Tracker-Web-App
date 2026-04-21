@@ -68,7 +68,7 @@ catch (Exception $e) {
                     $category = $conn->real_escape_string($_POST['category']);
                     $description = $conn->real_escape_string($_POST['description']);
 
-                    $sql = "INSERT INTO issues (issue_id, title, category, description, user_id, admin_uid, status, timestamp) VALUES (NULL, '$title', '$category', '$description', '$user_id', '000000', 'Ongoing', CURRENT_TIMESTAMP(6));";
+                    $sql = "INSERT INTO issues (issue_id, title, category, description, user_id, admin_uid, status, created_time, last_updated) VALUES (NULL, '$title', '$category', '$description', '$user_id', '000000', 'Ongoing', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6));";
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                     $stmt->close();
