@@ -3,6 +3,9 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../index.php');
     exit();
+} else if ($_SESSION['is_approved'] != 1) {
+    header('Location: ../approval-notice.php');
+    exit();
 }
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php');

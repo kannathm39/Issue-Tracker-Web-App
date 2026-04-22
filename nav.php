@@ -1,3 +1,14 @@
+<?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php');
+$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv->load();
+
+$hostname = $_ENV['DB_HOST'];
+$database = $_ENV['DB_NAME'];
+$usernameSelect = $_ENV['DB_SELECT_USERNAME'];
+$passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
+?>
+
 <nav>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.png">
     <ul class="nav-bar">
@@ -8,15 +19,34 @@
             echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
         } else if (isset($_SESSION['user_id']) && $_SESSION['admin'] == 1) {
             echo '<li><a href="http://localhost:9090/admin/view-issues/index.php">View Issues</a></li>';
-            echo '<li><a href="#">Manage Users</a></li>';
-            echo '<li><a href="#">User Approvals</a></li>';
+            echo '<li><a href="http://localhost:9090/admin/manage-users/index.php">Manage Users</a></li>';
+
+            //Get approvals
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $sql = 'SELECT * FROM users WHERE is_approved != 1 AND admin != 1';
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $stmt->close();
+                $conn->close();
+
+                $notif_approve = $result->num_rows;
+                echo '<li><a href="http://localhost:9090/admin/user-approvals/index.php"><span class="notif-circle">' . $notif_approve . '</span> User Approvals</a></li>';
+            } catch (mysqli_sql_exception $e) {
+                echo '<li><a href="http://localhost:9090/admin/user-approvals/index.php">User Approvals</a></li>';
+            }
         }
         ?>
         <li><a href="http://localhost:9090/docs/index.php">Documentation</a></li>
 
         <li class="dropdown" style="float:right">
             <?php
-            if (isset($_SESSION['user_id'])) {
+
+            if (isset($_SESSION['user_id']) AND $_SESSION['admin'] == 1) {
+                    echo '<a href="javascript:void(0)" class="dropbtn"><span style="font-size:17px;">Administrator Account</span> ★ ' . $_SESSION['firstname'] . '</a>';
+            } else if (isset($_SESSION['user_id'])) {
                 echo '<a href="javascript:void(0)" class="dropbtn">' . $_SESSION['firstname'] . '</a>';
             } else {
                 echo '<a href="javascript:void(0)" class="dropbtn">Account</a>';
@@ -25,7 +55,7 @@
             <div class="dropdown-content">
                 <?php
                 if (isset($_SESSION['user_id'])) {
-                    echo '<a href="#">My Account</a>';
+                    echo '<a href="http://localhost:9090/my-account/index.php">My Account</a>';
                     echo '<a href="#">Settings</a>';
                     echo '<a href="http://localhost:9090/logout.php">Logout</a>';
                 } else {

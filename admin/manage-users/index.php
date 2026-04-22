@@ -44,8 +44,8 @@ catch (Exception $e) {
 <?php include '../../nav.php'; ?>
 <div class="body-container">
     <div>
-        <h1>Issues</h1>
-        <p>View and manage all issues.</p>
+        <h1>User</h1>
+        <p>View and manage all users.</p>
     </div>
     <br>
     <div class="table-container">
@@ -54,15 +54,14 @@ catch (Exception $e) {
         $table_content = "<table>";
 
         $table_content .= "<tr>";
-        $table_content .= "<th>Issue ID</th>";
-        $table_content .= "<th>Title</th>";
-        $table_content .= "<th>Category</th>";
-        $table_content .= "<th>Description</th>";
         $table_content .= "<th>User ID</th>";
-        $table_content .= "<th>Assigned Admin</th>";
-        $table_content .= "<th>Status</th>";
-        $table_content .= "<th>Last Updated</th>";
-        $table_content .= "<th>Created Time</th>";
+        $table_content .= "<th>Username</th>";
+        $table_content .= "<th>First name</th>";
+        $table_content .= "<th>Surname</th>";
+        $table_content .= "<th>Email</th>";
+        $table_content .= "<th>Admin Status</th>";
+        $table_content .= "<th>Approval Status</th>";
+        $table_content .= "<th>Deletion Status</th>";
         $table_content .= "<th></th>";
         $table_content .= "</tr>";
 
@@ -70,7 +69,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-            $sql = 'SELECT * FROM issues ORDER BY last_updated DESC';
+            $sql = 'SELECT * FROM users';
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -80,25 +79,30 @@ catch (Exception $e) {
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $table_content .= "<tr>";
-                    $table_content .= "<td>" . htmlspecialchars($row["issue_id"]) . "</td>";
-                    $table_content .= "<td><b>" . htmlspecialchars($row["title"]) . "</b></td>";
-                    $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
-                    $table_content .= "<td><div class='truncate'>" . htmlspecialchars($row["description"]) . "</div></td>";
                     $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
-                    if (htmlspecialchars($row["admin_uid"]) == 0) {
-                        $table_content .= "<td>Unassigned</td>";
+                    $table_content .= "<td><b>" . htmlspecialchars($row["username"]) . "</b></td>";
+                    $table_content .= "<td>" . htmlspecialchars($row["firstname"]) . "</td>";
+                    $table_content .= "<td>" . htmlspecialchars($row["surname"]) . "</td>";
+                    $table_content .= "<td>" . htmlspecialchars($row["email"]) . "</td>";
+
+                    if (htmlspecialchars($row["admin"]) == "1") {
+                        $table_content .= "<td style='color:#7300ff;'><b>Admin</b></td>";
                     } else {
-                        $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
+                        $table_content .= "<td>User</td>";
                     }
-                    $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
-                    $trimmed_ts = substr(htmlspecialchars($row["last_updated"]), 0, 16);
-                    $trim_date = substr($trimmed_ts, 0, 10);
-                    $trim_time = substr($trimmed_ts, 10, 6);
-                    $table_content .= "<td>" . $trim_date . "<span style='color:#5c62b0;'><b>" . $trim_time . "</b></span></td>";
-                    $trimmed_ts = substr(htmlspecialchars($row["created_time"]), 0, 16);
-                    $trim_date = substr($trimmed_ts, 0, 10);
-                    $trim_time = substr($trimmed_ts, 10, 6);
-                    $table_content .= "<td>" . $trim_date . "<span style='color:#8c8c8c;'><b>" . $trim_time . "</b></span></td>";
+
+                    if (htmlspecialchars($row["is_approved"]) == "1") {
+                        $table_content .= "<td><b>Approved</b></td>";
+                    } else {
+                        $table_content .= "<td style='color:#0788ce;'>Awaiting Approval</td>";
+                    }
+
+                    if (htmlspecialchars($row["is_deleted"]) == "1") {
+                        $table_content .= "<td style='color:#d11f1f;'>Deleted</td>";
+                    } else {
+                        $table_content .= "<td>Active</td>";
+                    }
+
                     $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
                     $table_content .= "</tr>";
                 }

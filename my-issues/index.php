@@ -3,6 +3,9 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../index.php');
     exit();
+} else if ($_SESSION['is_approved'] != 1) {
+    header('Location: ../approval-notice.php');
+    exit();
 }
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php');
@@ -67,7 +70,7 @@ catch (Exception $e) {
                 $conn = null;
                 try {
                     $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-                    $sql = 'SELECT * FROM issues WHERE user_id = ?';
+                    $sql = 'SELECT * FROM issues WHERE user_id = ? ORDER BY last_updated DESC';
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param('i', $_SESSION['user_id']);
                     $stmt->execute();
@@ -79,14 +82,24 @@ catch (Exception $e) {
                         while ($row = $result->fetch_assoc()) {
                             $table_content .= "<tr>";
                             $table_content .= "<td>" . htmlspecialchars($row["issue_id"]) . "</td>";
-                            $table_content .= "<td>" . htmlspecialchars($row["title"]) . "</td>";
+                            $table_content .= "<td><b>" . htmlspecialchars($row["title"]) . "</b></td>";
                             $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
                             $table_content .= "<td><div class='truncate'>" . htmlspecialchars($row["description"]) . "</div></td>";
                             $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
-                            $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
+                            if (htmlspecialchars($row["admin_uid"]) == 0) {
+                                $table_content .= "<td>Unassigned</td>";
+                            } else {
+                                $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
+                            }
                             $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
-                            $table_content .= "<td>" . htmlspecialchars($row["last_updated"]) . "</td>";
-                            $table_content .= "<td>" . htmlspecialchars($row["created_time"]) . "</td>";
+                            $trimmed_ts = substr(htmlspecialchars($row["last_updated"]), 0, 16);
+                            $trim_date = substr($trimmed_ts, 0, 10);
+                            $trim_time = substr($trimmed_ts, 10, 6);
+                            $table_content .= "<td>" . $trim_date . "<span style='color:#5c62b0;'><b>" . $trim_time . "</b></span></td>";
+                            $trimmed_ts = substr(htmlspecialchars($row["created_time"]), 0, 16);
+                            $trim_date = substr($trimmed_ts, 0, 10);
+                            $trim_time = substr($trimmed_ts, 10, 6);
+                            $table_content .= "<td>" . $trim_date . "<span style='color:#8c8c8c;'><b>" . $trim_time . "</b></span></td>";
                             $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
                             $table_content .= "</tr>";
                         }
@@ -96,6 +109,7 @@ catch (Exception $e) {
 
                     $table_content .= "</table><br>";
                     echo $table_content;
+
                 } catch (mysqli_sql_exception $e) {
                     echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
                 }
@@ -106,6 +120,7 @@ catch (Exception $e) {
         </div>
 
         <?php include '../footer.php'; ?>
+
     </body>
 
 </html>

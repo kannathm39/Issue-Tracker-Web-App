@@ -109,7 +109,7 @@ li.dropdown {
     color: dimgrey;
 }
 
-form {
+form.user-form{
     border-radius: 5px;
     background-color: #aeaeff;
     padding: 30px;
@@ -179,6 +179,10 @@ input.delete-button {
     background-color: #a61a26;
 }
 
+input.approve-button {
+    background-color: #72c372;
+}
+
 input.edit-button:hover {background-color: #dbbaff;}
 
 .table-container {
@@ -245,6 +249,13 @@ th {
     background-color: #a2deb9;
     padding:15px;
     border-radius: 4px;
+}
+
+.notif-circle {
+    border-color: #47c0e5;
+    padding:2px;
+    background-color: #47c0e5;
+    color: #021870;
 }
 
 @media screen and (max-width: 600px) {

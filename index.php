@@ -39,26 +39,6 @@ catch (Exception $e) {
                 Admins can respond to users through threads and update the status of issues.
             </p>
 
-            <?php
-            // SELECT * FROM table and print the result
-            $sql = "SELECT * FROM users";
-            $result = $conn->query($sql);
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo "User ID: " . htmlspecialchars($row["user_id"]) . '<br>';
-                    echo "Username: " . htmlspecialchars($row["username"]) . '<br>';
-                    echo "Firstname: " . htmlspecialchars($row["firstname"]) . '<br>';
-                    echo "Surname: " . htmlspecialchars($row["surname"]) . ' <br>';
-                    echo "Email Address: " . htmlspecialchars($row["email"]) . ' <br>';
-                    echo "-----------------------------------" . '<br>';
-                }
-            } else {
-                echo "0 results";
-            }
-
-            $conn->close();
-            ?>
-
         </div>
         <?php include './footer.php'; ?>
     </body>

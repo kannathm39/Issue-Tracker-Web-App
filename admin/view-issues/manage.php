@@ -1,10 +1,10 @@
 <?php
+//=========================================================================================
+//-------------------------------------ADMIN PAGE------------------------------------------
+//=========================================================================================
 session_start();
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['admin'] != 1) {
     header('Location: ../index.php');
-    exit();
-} else if ($_SESSION['is_approved'] != 1) {
-    header('Location: ../approval-notice.php');
     exit();
 }
 
@@ -45,11 +45,11 @@ catch (Exception $e) {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Manage issue</title>
-        <link href="../style.css" media="all" rel="stylesheet">
+        <link href="../../style.css" media="all" rel="stylesheet">
     </head>
 
     <body>
-        <?php include '../nav.php'; ?>
+        <?php include '../../nav.php'; ?>
         <div class="body-container">
             <div>
                 <?php
@@ -58,9 +58,9 @@ catch (Exception $e) {
                 $conn = null;
                 try {
                     $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-                    $sql = 'SELECT * FROM issues WHERE issue_id = ? AND user_id = ?';
+                    $sql = 'SELECT * FROM issues WHERE issue_id = ?';
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param('ii', $current_issue, $_SESSION['user_id']);
+                    $stmt->bind_param('i', $current_issue);
                     $stmt->execute();
                     $result = $stmt->get_result();
                     $stmt->close();
@@ -78,7 +78,7 @@ catch (Exception $e) {
                         $created_time = $row['created_time'];
                         $last_updated = $row['last_updated'];
 
-                        echo '<h1><a href="index.php">My Issues</a> >> <span style="color:#9f89f1">' . $title . '</span></h1>';
+                        echo '<h1><a href="index.php">Issues</a> >> <span style="color:#9f89f1">' . $title . '</span></h1>';
 
                         //Make table showing issue information
                         echo '<table class="vertical-table">';
@@ -92,11 +92,13 @@ catch (Exception $e) {
                         echo '<tr><th>Last Updated</th><td>' . $last_updated . '</td></tr>';
                         echo '</table><br>';
 
-                        //Show edit button
+                        //Edit button
                         echo '<form action="" method="post" target="_self" class="edit-button-form">';
-                        echo '<input type="submit" name="edit" value="Edit" class="edit-button"></form>
-                        <form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to delete this issue?\nClick OK to confirm.\');">
-                        <input type="submit" name="delete" value="Delete" class="delete-button">
+                        echo '<input type="submit" name="edit" value="Edit" class="edit-button"></form>';
+
+                        //Permanently delete button
+                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to delete this issue?\nClick OK to confirm.\');">
+                        <input type="submit" name="delete" value="⚠ Permanent delete" class="delete-button">
                         </form>';
 
                         //Edit form
@@ -123,9 +125,9 @@ catch (Exception $e) {
                                 $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
 
 
-                                $sql = 'UPDATE issues SET title = ?, category = ?, description = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ? AND user_id = ?';
+                                $sql = 'UPDATE issues SET title = ?, category = ?, description = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?';
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bind_param('sssii', $_POST['title'], $_POST['category'], $_POST['description'], $issue_id, $_SESSION['user_id']);
+                                $stmt->bind_param('sssi', $_POST['title'], $_POST['category'], $_POST['description'], $issue_id);
                                 $stmt->execute();
                                 $stmt->close();
                                 $conn->close();
@@ -141,9 +143,9 @@ catch (Exception $e) {
                             $conn = null;
                             try {
                                 $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
-                                $sql = 'DELETE FROM issues WHERE issue_id = ? AND user_id = ?';
+                                $sql = 'DELETE FROM issues WHERE issue_id = ?';
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bind_param('ii', $issue_id, $_SESSION['user_id']);
+                                $stmt->bind_param('i', $issue_id);
                                 $stmt->execute();
                                 $stmt->close();
                                 $conn->close();
@@ -177,7 +179,7 @@ catch (Exception $e) {
 
         </div>
 
-        <?php include '../footer.php'; ?>
+        <?php include '../../footer.php'; ?>
     </body>
 
 </html>

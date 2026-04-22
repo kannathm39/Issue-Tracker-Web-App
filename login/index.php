@@ -72,6 +72,9 @@ catch (Exception $e) {
                                 $_SESSION['surname'] = $row['surname'];
                                 $_SESSION['email'] = $row['email'];
                                 $_SESSION['admin'] = $row['admin'];
+                                $_SESSION['is_approved'] = $row['is_approved'];
+                                $_SESSION['is_deleted'] = $row['is_deleted'];
+
                                 header('Location: ../index.php');
                                 exit;
                             } else {
