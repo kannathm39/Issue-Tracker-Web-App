@@ -16,9 +16,10 @@ $hostname = $_ENV['DB_HOST'];
 $database = $_ENV['DB_NAME'];
 $usernameSelect = $_ENV['DB_SELECT_USERNAME'];
 $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
-
-//Fake USER ID for now
-$user_id = 1;
+$usernameUpdate = $_ENV['DB_UPDATE_USERNAME'];
+$passwordUpdate = $_ENV['DB_UPDATE_PASSWORD'];
+$usernameDelete = $_ENV['DB_DELETE_USERNAME'];
+$passwordDelete = $_ENV['DB_DELETE_PASSWORD'];
 
 // Create connection
 $conn = null;
@@ -44,10 +45,12 @@ catch (Exception $e) {
 <?php include '../../nav.php'; ?>
 <div class="body-container">
     <div>
-        <h1>Issues</h1>
-        <p>View and manage all issues.</p>
+        <h1>Issue Updates</h1>
+        <p>Issues that have been updated or require admin response.</p>
     </div>
     <br>
+
+    <h2>Unassigned Issues</h2>
     <div class="table-container">
         <?php
         //Make table headings
@@ -71,7 +74,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-            $sql = 'SELECT * FROM issues ORDER BY last_updated DESC';
+            $sql = 'SELECT * FROM issues WHERE admin_uid = 0 ORDER BY last_updated DESC';
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -109,7 +112,7 @@ catch (Exception $e) {
                     } else {
                         $table_content .= "<td>Active</td>";
                     }
-                    $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
+                    $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>Assign Admin</button></a></td>";
                     $table_content .= "</tr>";
                 }
             } else {
@@ -122,8 +125,55 @@ catch (Exception $e) {
         } catch (mysqli_sql_exception $e) {
             echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
         }
+
+        //Approve Account
+        if (isset($_POST['approve'])) {
+
+            //Update database
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+
+                $sql = 'UPDATE users SET is_approved = 1 WHERE user_id = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('i', $_POST['user_id']);
+                $stmt->execute();
+                $stmt->close();
+                $conn->close();
+
+            } catch (mysqli_sql_exception $e) {
+                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+            }
+            header('Location: index.php');
+
+        }
+
+        //Permanently Delete Account
+        if (isset($_POST['delete'])) {
+
+            //Update database
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
+
+                $sql = 'DELETE FROM users WHERE user_id = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('i', $_POST['user_id']);
+                $stmt->execute();
+                $stmt->close();
+                $conn->close();
+
+
+            } catch (mysqli_sql_exception $e) {
+                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+            }
+            header('Location: index.php');
+
+        }
         ?>
     </div>
+
+    <h2>Updated Issues</h2>
 
 
 </div>

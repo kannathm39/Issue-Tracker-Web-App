@@ -19,13 +19,31 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
             echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
         } else if (isset($_SESSION['user_id']) && $_SESSION['admin'] == 1) {
             echo '<li><a href="http://localhost:9090/admin/view-issues/index.php">View Issues</a></li>';
+
+            //Get updates
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $sql = 'SELECT * FROM issues WHERE admin_uid = 0';
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $stmt->close();
+                $conn->close();
+
+                $notif_updates = $result->num_rows;
+                echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php"><span class="notif-circle">' . $notif_updates . '</span> Updates</a></li>';
+            } catch (mysqli_sql_exception $e) {
+                echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php">Updates</a></li>';
+            }
+
             echo '<li><a href="http://localhost:9090/admin/manage-users/index.php">Manage Users</a></li>';
 
             //Get approvals
             $conn = null;
             try {
                 $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-                $sql = 'SELECT * FROM users WHERE is_approved != 1 AND admin != 1';
+                $sql = 'SELECT * FROM users WHERE is_approved != 1';
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
                 $result = $stmt->get_result();

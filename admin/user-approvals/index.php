@@ -4,7 +4,7 @@
 //=========================================================================================
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['admin'] != 1) {
-    header('Location: ../index.php');
+    header('Location: ../../index.php');
     exit();
 }
 
@@ -69,7 +69,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-            $sql = 'SELECT * FROM users WHERE is_approved != 1 AND admin != 1';
+            $sql = 'SELECT * FROM users WHERE is_approved != 1';
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -78,7 +78,11 @@ catch (Exception $e) {
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    $table_content .= "<tr>";
+                    if (htmlspecialchars($row['is_deleted']) == 1) {
+                        $table_content .= "<tr class='deleted-row'>";
+                    } else {
+                        $table_content .= "<tr>";
+                    }
                     $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
                     $table_content .= "<td><b>" . htmlspecialchars($row["username"]) . "</b></td>";
                     $table_content .= "<td>" . htmlspecialchars($row["firstname"]) . "</td>";

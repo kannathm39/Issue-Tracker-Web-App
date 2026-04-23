@@ -111,7 +111,7 @@ catch (Exception $e) {
                 ?>
                 <br>
 
-                <form action="./index.php" method="post" target="_self" class="form-log">
+                <form action="./index.php" method="post" target="_self" class="form-log user-form">
 
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" minlength="3" maxlength="20" required value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES) : ''; ?>"><br><br>

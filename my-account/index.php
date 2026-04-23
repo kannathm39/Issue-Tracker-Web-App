@@ -22,8 +22,28 @@ $username = $_SESSION['username'];
 $firstname = $_SESSION['firstname'];
 $surname = $_SESSION['surname'];
 $email = $_SESSION['email'];
-$is_approved = $_SESSION['is_approved'];
 
+$conn = null;
+try {
+    $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+    $sql = 'SELECT is_approved FROM users WHERE user_id = ?';
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+    $conn->close();
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $is_approved = htmlspecialchars($row['is_approved']);
+        }
+    } else {
+        $is_approved = $_SESSION['is_approved'];
+    }
+} catch (mysqli_sql_exception $e) {
+    $is_approved = $_SESSION['is_approved'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -71,9 +91,8 @@ $is_approved = $_SESSION['is_approved'];
 
                 //Edit form
                 if (isset($_POST['edit'])) {
-                    echo '<p>Done</p>';
                     echo '
-                            <form action="" method="post" target="_self" class="form-db">
+                            <form action="" method="post" target="_self" class="form-db user-form">
                                 <label for="username">Username</label>
                                 <input type="text" id="username" name="username" value="' . $username . '" minlength="8" maxlength="20" required><br><br>
                                 <label for="firstname">First name</label>

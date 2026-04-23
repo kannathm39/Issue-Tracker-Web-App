@@ -179,6 +179,10 @@ input.delete-button {
     background-color: #a61a26;
 }
 
+input.m-delete-button {
+    background-color: grey;
+}
+
 input.approve-button {
     background-color: #72c372;
 }
@@ -221,6 +225,12 @@ button:hover {background-color: #dbbaff;}
 tr:nth-child(even){background-color: #f2f2f2;}
 
 tr:hover {background-color: #e6e1f8;}
+
+tr.deleted-row {
+    font-style: italic;
+    font-family: Courier, monospace;
+    color: #959595;
+}
 
 th {
     padding-top: 12px;

@@ -92,7 +92,7 @@ catch (Exception $e) {
                 ?>
                 <br>
 
-                <form action="./index.php" method="post" target="_self" class="form-log">
+                <form action="./index.php" method="post" target="_self" class="form-log user-form">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" maxlength="20" required><br>
                     <label for="password">Password:</label>

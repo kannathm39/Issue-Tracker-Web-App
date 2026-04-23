@@ -4,7 +4,7 @@
 //=========================================================================================
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['admin'] != 1) {
-    header('Location: ../index.php');
+    header('Location: ../../index.php');
     exit();
 }
 
@@ -77,6 +77,7 @@ catch (Exception $e) {
                         $status = $row['status'];
                         $created_time = $row['created_time'];
                         $last_updated = $row['last_updated'];
+                        $is_deleted = $row['is_deleted'];
 
                         echo '<h1><a href="index.php">Issues</a> >> <span style="color:#9f89f1">' . $title . '</span></h1>';
 
@@ -90,22 +91,27 @@ catch (Exception $e) {
                         echo '<tr><th>Status</th><td>' . $status . '</td></tr>';
                         echo '<tr><th>Created Time</th><td>' . $created_time . '</td></tr>';
                         echo '<tr><th>Last Updated</th><td>' . $last_updated . '</td></tr>';
+                        echo '<tr><th>Deletion Status</th><td>' . $is_deleted . '</td></tr>';
                         echo '</table><br>';
 
                         //Edit button
                         echo '<form action="" method="post" target="_self" class="edit-button-form">';
                         echo '<input type="submit" name="edit" value="Edit" class="edit-button"></form>';
 
+                        //Mark as delete button
+                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to mark this issue as deleted?\nClick OK to confirm.\');">
+                        <input type="submit" name="delete" value="Mark as deleted" class="m-delete-button">
+                        </form>';
+
                         //Permanently delete button
-                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to delete this issue?\nClick OK to confirm.\');">
-                        <input type="submit" name="delete" value="⚠ Permanent delete" class="delete-button">
+                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to PERMANENTLY delete this issue?\nClick OK to confirm.\');">
+                        <input type="submit" name="perm-delete" value="⚠ Permanent delete" class="delete-button">
                         </form>';
 
                         //Edit form
                         if (isset($_POST['edit'])) {
-                            echo '<p>Done</p>';
                             echo '
-                            <form action="" method="post" target="_self" class="form-db">
+                            <form action="" method="post" target="_self" class="form-db user-form">
                                 <label for="title">Title</label>
                                 <input type="text" id="title" name="title" value="' . $title . '" minlength="8" maxlength="20" required><br><br>
                                 <label for="category">Category</label>
@@ -138,8 +144,26 @@ catch (Exception $e) {
                             }
                         }
 
-                        //Permanently Delete
+                        //Mark as Delete
                         if (isset($_POST['delete'])) {
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $sql = 'UPDATE issues SET is_deleted = 1 WHERE issue_id = ?';
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param('i', $issue_id);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+                                header('Location: manage.php?id=' . $issue_id);
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
+                        //Permanently Delete
+                        if (isset($_POST['perm-delete'])) {
                             $conn = null;
                             try {
                                 $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);

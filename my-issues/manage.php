@@ -101,9 +101,8 @@ catch (Exception $e) {
 
                         //Edit form
                         if (isset($_POST['edit'])) {
-                            echo '<p>Done</p>';
                             echo '
-                            <form action="" method="post" target="_self" class="form-db">
+                            <form action="" method="post" target="_self" class="form-db user-form">
                                 <label for="title">Title</label>
                                 <input type="text" id="title" name="title" value="' . $title . '" minlength="8" maxlength="20" required><br><br>
                                 <label for="category">Category</label>
@@ -136,12 +135,12 @@ catch (Exception $e) {
                             }
                         }
 
-                        //Permanently Delete
+                        //Mark as Delete
                         if (isset($_POST['delete'])) {
                             $conn = null;
                             try {
-                                $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
-                                $sql = 'DELETE FROM issues WHERE issue_id = ? AND user_id = ?';
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $sql = 'UPDATE issues SET is_deleted = 1 WHERE issue_id = ? AND user_id = ?';
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('ii', $issue_id, $_SESSION['user_id']);
                                 $stmt->execute();
