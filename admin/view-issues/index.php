@@ -48,10 +48,50 @@ catch (Exception $e) {
         <p>View and manage all issues.</p>
     </div>
     <br>
+
+    <!--Search and filter-->
+    <div class="searchFilters">
+        <input type="text" id="issueidInput" onkeyup="searchIssueTable()" placeholder="Search Issue IDs..." title="Search Issue ID">
+        <input type="text" id="titleInput" onkeyup="searchIssueTable()" placeholder="Search Titles..." title="Search Title">
+        <form action="" method="post" target="">
+            <select id="categoryInput" name="category" onchange="searchIssueTable()">
+                <option value="" disabled selected>Search Category...</option>
+                <option value="">All</option>
+                <option value="Software Issue">Software Issue</option>
+                <option value="Hardware Issue">Hardware Issue</option>
+                <option value="General IT Issue">General IT Issue</option>
+                <option value="Request">Request</option>
+                <option value="Other">Other</option>
+            </select>
+        </form>
+        <input type="text" id="descInput" onkeyup="searchIssueTable()" placeholder="Search Descriptions..." title="Search Description">
+        <input type="text" id="useridInput" onkeyup="searchIssueTable()" placeholder="Search Users..." title="Search User">
+        <input type="text" id="adminInput" onkeyup="searchIssueTable()" placeholder="Search Assigned Admins..." title="Search Admin">
+        <form action="" method="post" target="">
+            <select id="statusInput" name="status" onchange="searchIssueTable()">
+                <option value="" disabled selected>Search Status...</option>
+                <option value="">All</option>
+                <option value="Awaiting Admin">Awaiting Admin</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+            </select>
+        </form>
+        <form action="" method="post" target="">
+            <select id="deletionInput" name="deletion" onchange="searchIssueTable()">
+                <option value="" disabled selected>Search Deletion Status...</option>
+                <option value="">All</option>
+                <option value="Active">Active</option>
+                <option value="Deleted">Deleted</option>
+            </select>
+        </form>
+    </div>
+
+    <!--Table-->
     <div class="table-container">
         <?php
         //Make table headings
-        $table_content = "<table>";
+        $table_content = "<table id='issue_table'>";
 
         $table_content .= "<tr>";
         $table_content .= "<th>Issue ID</th>";
@@ -71,6 +111,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+            $conn->query("SET time_zone = 'Europe/London'");
             $sql = 'SELECT * FROM issues ORDER BY last_updated DESC';
             $stmt = $conn->prepare($sql);
             $stmt->execute();
@@ -95,7 +136,36 @@ catch (Exception $e) {
                     } else {
                         $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
                     }
-                    $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+
+                    // Get update notifications
+                    $conn = null;
+                    $issue_id = htmlspecialchars($row['issue_id']);
+                        try {
+                            $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                            $conn->query("SET time_zone = 'Europe/London'");
+                            $sql = "SELECT * FROM comments WHERE issue_id = ? AND admin_notif = 1";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('i', $issue_id);
+                            $stmt->execute();
+                            $updates_result = $stmt->get_result();
+                            $stmt->close();
+                            $conn->close();
+
+                            if ($updates_result->num_rows > 0) {
+                                $notif_updates = $updates_result->num_rows;
+                                if ($notif_updates > 1) {
+                                    $table_content .= "<td class='highlight-cell'>" . htmlspecialchars($row["status"]) . "<br><span class='highlight'>" . $notif_updates . " updates!</span></td>";
+                                } else if ($notif_updates = 1) {
+                                    $table_content .= "<td class='highlight-cell'>" . htmlspecialchars($row["status"]) . "<br><span class='highlight'>" . $notif_updates . " update!</span></td>";
+                                }
+                            } else {
+                                $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+                            }
+
+
+                        } catch (mysqli_sql_exception $e) {
+                            $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+                        }
                     $trimmed_ts = substr(htmlspecialchars($row["last_updated"]), 0, 16);
                     $trim_date = substr($trimmed_ts, 0, 10);
                     $trim_time = substr($trimmed_ts, 10, 6);
@@ -131,5 +201,73 @@ catch (Exception $e) {
 <?php include '../../footer.php'; ?>
 
 </body>
+<script>
+search_input
+    //Search issue table
+    function searchIssueTable() {
+        var inputIssueID, inputTitle, inputCategory, inputDesc, inputUserID, inputAdmin, inputStatus, inputDel,
+            table, tr, td, i,
+            filterIssue, filterTitle, filterCategory, filterDesc, filterUser, filterAdmin, filterStatus, filterDel;
+
+        inputIssueID = document.getElementById("issueidInput");
+        inputTitle = document.getElementById("titleInput")
+        inputCategory = document.getElementById("categoryInput");
+        inputDesc = document.getElementById("descInput");
+        inputUserID = document.getElementById("useridInput");
+        inputAdmin = document.getElementById("adminInput");
+        inputStatus = document.getElementById("statusInput");
+        inputDel = document.getElementById("deletionInput");
+
+        filterIssue = inputIssueID.value.toUpperCase();
+        filterTitle = inputTitle.value.toUpperCase();
+        filterCategory = inputCategory.value.toUpperCase();
+        filterDesc = inputDesc.value.toUpperCase();
+        filterUser = inputUserID.value.toUpperCase();
+        filterAdmin = inputAdmin.value.toUpperCase();
+        filterStatus = inputStatus.value.toUpperCase();
+        filterDel = inputDel.value.toUpperCase();
+
+        table = document.getElementById("issue_table");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            td1 = tr[i].getElementsByTagName("td")[1];
+            td2 = tr[i].getElementsByTagName("td")[2];
+            td3 = tr[i].getElementsByTagName("td")[3];
+            td4 = tr[i].getElementsByTagName("td")[4];
+            td5 = tr[i].getElementsByTagName("td")[5];
+            td6 = tr[i].getElementsByTagName("td")[6];
+            td9 = tr[i].getElementsByTagName("td")[9];
+
+            if (td && td1 && td2 && td3 && td4 && td5 && td6 && td9) {
+                issue = (td.textContent || td.innerText).toUpperCase();
+                title = (td1.textContent || td1.innerText).toUpperCase();
+                cat = (td2.textContent || td2.innerText).toUpperCase();
+                desc = (td3.textContent || td3.innerText).toUpperCase();
+                user = (td4.textContent || td4.innerText).toUpperCase();
+                admin = (td5.textContent || td5.innerText).toUpperCase();
+                stat = (td6.textContent || td6.innerText).toUpperCase();
+                del = (td9.textContent || td9.innerText).toUpperCase();
+
+                if (
+                    issue.indexOf(filterIssue) > -1 &&
+                    title.indexOf(filterTitle) > -1 &&
+                    cat.indexOf(filterCategory) > -1 &&
+                    desc.indexOf(filterDesc) > -1 &&
+                    user.indexOf(filterUser) > -1 &&
+                    admin.indexOf(filterAdmin) > -1 &&
+                    stat.indexOf(filterStatus) > -1 &&
+                    del.indexOf(filterDel) > -1
+                ) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+        }
+    }
+
+</script>
 
 </html>

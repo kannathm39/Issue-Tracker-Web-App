@@ -26,6 +26,7 @@ $email = $_SESSION['email'];
 $conn = null;
 try {
     $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+    $conn->query("SET time_zone = 'Europe/London'");
     $sql = 'SELECT is_approved FROM users WHERE user_id = ?';
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $_SESSION['user_id']);
@@ -110,6 +111,7 @@ try {
                     $conn = null;
                     try {
                         $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                        $conn->query("SET time_zone = 'Europe/London'");
 
 
                         $sql = 'UPDATE users SET username = ?, firstname = ?, surname = ? WHERE user_id = ?';
@@ -135,6 +137,7 @@ try {
                     $conn = null;
                     try {
                         $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                        $conn->query("SET time_zone = 'Europe/London'");
                         $sql = 'UPDATE users SET is_deleted = 1 WHERE user_id = ?';
                         $stmt = $conn->prepare($sql);
                         $stmt->bind_param('i', $_SESSION['user_id']);

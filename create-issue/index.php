@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+date_default_timezone_set('Europe/London');
+
 require_once($_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php');
 $dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
 $dotenv->load();
@@ -49,9 +51,16 @@ catch (Exception $e) {
                 <h1>Create Issue</h1>
                 <form action="" method="post" target="_self" class="form-db user-form">
                     <label for="title">Title</label>
-                    <input type="text" id="title" name="title" minlength="8" maxlength="20" required><br><br>
+                    <input type="text" id="title" name="title" minlength="3" maxlength="80" required><br><br>
                     <label for="category">Category</label>
-                    <input type="text" id="category" name="category" required><br><br>
+                    <select id="category" name="category" required>
+                        <option value="Software Issue">Software Issue</option>
+                        <option value="Hardware Issue">Hardware Issue</option>
+                        <option value="General IT Issue">General IT Issue</option>
+                        <option value="Request">Request</option>
+                        <option value="Other">Other</option>
+                    </select><br><br>
+                    <!--<input type="text" id="category" name="category" required><br><br>-->
                     <label for="description"> Issue Description</label>
                     <textarea id="description" name="description" rows="5" cols="50"></textarea><br><br>
                     <input type="submit" name="submit" value="Submit">
@@ -65,13 +74,14 @@ catch (Exception $e) {
                 $conn = null;
                 try {
                     $conn = new mysqli($hostname, $usernameInsert, $passwordInsert, $database);
+                    $conn->query("SET time_zone = 'Europe/London'");
 
                     //Escape special characters
                     $title = $conn->real_escape_string($_POST['title']);
-                    $category = $conn->real_escape_string($_POST['category']);
+                    $category = $_POST['category'];
                     $description = $conn->real_escape_string($_POST['description']);
 
-                    $sql = "INSERT INTO issues (issue_id, title, category, description, user_id, admin_uid, status, created_time, last_updated) VALUES (NULL, '$title', '$category', '$description', '$user_id', '000000', 'Ongoing', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6));";
+                    $sql = "INSERT INTO issues (issue_id, title, category, description, user_id, admin_uid, status, created_time, last_updated) VALUES (NULL, '$title', '$category', '$description', '$user_id', '000000', 'Awaiting Admin', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6))";
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                     $stmt->close();

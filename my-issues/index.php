@@ -58,7 +58,6 @@ catch (Exception $e) {
                 $table_content .= "<th>Title</th>";
                 $table_content .= "<th>Category</th>";
                 $table_content .= "<th>Description</th>";
-                $table_content .= "<th>User ID</th>";
                 $table_content .= "<th>Assigned Admin</th>";
                 $table_content .= "<th>Status</th>";
                 $table_content .= "<th>Last Updated</th>";
@@ -70,7 +69,8 @@ catch (Exception $e) {
                 $conn = null;
                 try {
                     $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-                    $sql = 'SELECT * FROM issues WHERE user_id = ? ORDER BY last_updated DESC';
+                    $conn->query("SET time_zone = 'Europe/London'");
+                    $sql = 'SELECT * FROM issues WHERE user_id = ? AND is_deleted = 0 ORDER BY last_updated DESC';
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param('i', $_SESSION['user_id']);
                     $stmt->execute();
@@ -85,13 +85,41 @@ catch (Exception $e) {
                             $table_content .= "<td><b>" . htmlspecialchars($row["title"]) . "</b></td>";
                             $table_content .= "<td>" . htmlspecialchars($row["category"]) . "</td>";
                             $table_content .= "<td><div class='truncate'>" . htmlspecialchars($row["description"]) . "</div></td>";
-                            $table_content .= "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
                             if (htmlspecialchars($row["admin_uid"]) == 0) {
                                 $table_content .= "<td>Unassigned</td>";
                             } else {
                                 $table_content .= "<td>" . htmlspecialchars($row["admin_uid"]) . "</td>";
                             }
-                            $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+
+                            // Get update notifications
+                            $conn = null;
+                            $issue_id = htmlspecialchars($row['issue_id']);
+                            try {
+                                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $sql = "SELECT * FROM comments WHERE issue_id = ? AND user_notif = 1";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param('i', $issue_id);
+                                $stmt->execute();
+                                $updates_result = $stmt->get_result();
+                                $stmt->close();
+                                $conn->close();
+
+                                if ($updates_result->num_rows > 0) {
+                                    $notif_updates = $updates_result->num_rows;
+                                    if ($notif_updates > 1) {
+                                        $table_content .= "<td class='highlight-cell'>" . htmlspecialchars($row["status"]) . "<br><span class='highlight'>" . $notif_updates . " updates!</span></td>";
+                                    } else if ($notif_updates = 1) {
+                                        $table_content .= "<td class='highlight-cell'>" . htmlspecialchars($row["status"]) . "<br><span class='highlight'>" . $notif_updates . " update!</span></td>";
+                                    }
+                                } else {
+                                    $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+                                }
+
+
+                            } catch (mysqli_sql_exception $e) {
+                                $table_content .= "<td>" . htmlspecialchars($row["status"]) . "</td>";
+                            }
                             $trimmed_ts = substr(htmlspecialchars($row["last_updated"]), 0, 16);
                             $trim_date = substr($trimmed_ts, 0, 10);
                             $trim_time = substr($trimmed_ts, 10, 6);

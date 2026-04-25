@@ -50,7 +50,39 @@ catch (Exception $e) {
     </div>
     <br>
 
-    <h2>Unassigned Issues</h2>
+    <?php
+    //Get updates
+    $conn = null;
+    try {
+        $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+        $conn->query("SET time_zone = 'Europe/London'");
+        $sql = 'SELECT * FROM issues WHERE admin_uid = 0';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        $conn->close();
+
+        $notif_unassigned = $result->num_rows;
+
+        $conn = null;
+        $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+        $conn->query("SET time_zone = 'Europe/London'");
+        $sql = "SELECT * FROM comments WHERE admin_notif = 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $updates_result = $stmt->get_result();
+        $stmt->close();
+        $conn->close();
+
+        $notif_updates = $updates_result->num_rows;
+
+        echo '<h2><span class="notif-circle">' . $notif_unassigned . '</span> Unassigned Issues</h2>';
+    } catch (mysqli_sql_exception $e) {
+        echo '<h2>Unassigned Issues</h2>';
+    }
+    ?>
+
     <div class="table-container">
         <?php
         //Make table headings
@@ -74,6 +106,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+            $conn->query("SET time_zone = 'Europe/London'");
             $sql = 'SELECT * FROM issues WHERE admin_uid = 0 ORDER BY last_updated DESC';
             $stmt = $conn->prepare($sql);
             $stmt->execute();
@@ -126,54 +159,19 @@ catch (Exception $e) {
             echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
         }
 
-        //Approve Account
-        if (isset($_POST['approve'])) {
 
-            //Update database
-            $conn = null;
-            try {
-                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
-
-                $sql = 'UPDATE users SET is_approved = 1 WHERE user_id = ?';
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param('i', $_POST['user_id']);
-                $stmt->execute();
-                $stmt->close();
-                $conn->close();
-
-            } catch (mysqli_sql_exception $e) {
-                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
-            }
-            header('Location: index.php');
-
-        }
-
-        //Permanently Delete Account
-        if (isset($_POST['delete'])) {
-
-            //Update database
-            $conn = null;
-            try {
-                $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
-
-                $sql = 'DELETE FROM users WHERE user_id = ?';
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param('i', $_POST['user_id']);
-                $stmt->execute();
-                $stmt->close();
-                $conn->close();
-
-
-            } catch (mysqli_sql_exception $e) {
-                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
-            }
-            header('Location: index.php');
-
-        }
         ?>
     </div>
 
-    <h2>Updated Issues</h2>
+    <h2><?php echo '<span class="notif-circle">' . $notif_updates . '</span>'?> Updated Issues</h2>
+    <p>Issue Status Types</p>
+    <ol>
+        <li>Awaiting Admin</li>
+        <li>Ongoing</li>
+        <li>Resolved</li>
+        <li>Closed</li>
+    </ol>
+    <p>Notifications for updates works on responses.</p>
 
 
 </div>

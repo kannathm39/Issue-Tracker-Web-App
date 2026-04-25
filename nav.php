@@ -16,7 +16,29 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
         <?php
         if (isset($_SESSION['user_id']) && $_SESSION['admin'] != 1) {
             echo '<li><a href="http://localhost:9090/create-issue/index.php">Create Issue</a></li>';
-            echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
+
+            //Get updates
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
+                $sql = "SELECT * FROM comments WHERE user_notif = 1";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                $updates_result = $stmt->get_result();
+                $stmt->close();
+                $conn->close();
+
+                $notif_updates = $updates_result->num_rows;
+                if ($notif_updates != 0) {
+                    echo '<li><a href="http://localhost:9090/my-issues/index.php"><span class="notif-circle">' . $notif_updates . '</span> My Issues</a></li>';
+                } else {
+                    echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
+                }
+
+            } catch (mysqli_sql_exception $e) {
+                echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
+            }
         } else if (isset($_SESSION['user_id']) && $_SESSION['admin'] == 1) {
             echo '<li><a href="http://localhost:9090/admin/view-issues/index.php">View Issues</a></li>';
 
@@ -24,6 +46,7 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
             $conn = null;
             try {
                 $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
                 $sql = 'SELECT * FROM issues WHERE admin_uid = 0';
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
@@ -32,7 +55,23 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
                 $conn->close();
 
                 $notif_updates = $result->num_rows;
-                echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php"><span class="notif-circle">' . $notif_updates . '</span> Updates</a></li>';
+
+                $conn = null;
+                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
+                $sql = "SELECT * FROM comments WHERE admin_notif = 1";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                $updates_result = $stmt->get_result();
+                $stmt->close();
+                $conn->close();
+
+                $notif_updates = $notif_updates + $updates_result->num_rows;
+                if ($notif_updates != 0) {
+                    echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php"><span class="notif-circle">' . $notif_updates . '</span> Updates</a></li>';
+                } else {
+                    echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php">Updates</a></li>';
+                }
             } catch (mysqli_sql_exception $e) {
                 echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php">Updates</a></li>';
             }
@@ -43,6 +82,7 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
             $conn = null;
             try {
                 $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
                 $sql = 'SELECT * FROM users WHERE is_approved != 1';
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
@@ -51,7 +91,12 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
                 $conn->close();
 
                 $notif_approve = $result->num_rows;
-                echo '<li><a href="http://localhost:9090/admin/user-approvals/index.php"><span class="notif-circle">' . $notif_approve . '</span> User Approvals</a></li>';
+                if ($notif_approve != 0) {
+                    echo '<li><a href="http://localhost:9090/admin/user-approvals/index.php"><span class="notif-circle">' . $notif_approve . '</span> User Approvals</a></li>';
+                } else {
+                    echo '<li><a href="http://localhost:9090/admin/user-approvals/index.php">User Approvals</a></li>';
+                }
+
             } catch (mysqli_sql_exception $e) {
                 echo '<li><a href="http://localhost:9090/admin/user-approvals/index.php">User Approvals</a></li>';
             }

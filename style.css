@@ -15,6 +15,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 2;
     background: linear-gradient(90deg,rgba(72, 61, 139, 1) 0%, rgba(87, 124, 199, 1) 50%, rgba(193, 83, 237, 1) 100%);
 }
 
@@ -121,6 +122,10 @@ form.user-form{
     padding: 0;
 }
 
+select {
+    background-color: white;
+}
+
 .form-log {
     margin-left:auto;
     margin-right:auto;
@@ -189,6 +194,41 @@ input.approve-button {
 
 input.edit-button:hover {background-color: #dbbaff;}
 
+#search_input {
+    background-image: url('/assets/searchicon.png');
+    background-size: 22px 22px;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}
+
+select {
+    color:black;
+}
+
+select:has(option[disabled]:checked) {
+    color:grey;
+}
+
+.searchFilters {
+    width: 99.5%;
+    display: inline-grid;
+    grid-template-columns: 20% 20% 20% 20%;
+    background-color: rgba(241, 181, 235, 0.83);
+    border-radius: 3px;
+    padding:3px;
+    gap: 3px;
+    justify-content: center;
+}
+
+.searchFilters input, select{
+    font-size: 13px;
+}
+
 .table-container {
     overflow-x: auto;
 }
@@ -244,6 +284,60 @@ th {
     width:20%;
 }
 
+.incoming-bubble {
+    position: relative;
+    background: #8f65ff;
+    border-radius: .4em;
+    padding: 20px;
+    z-index: 1;
+}
+
+.incoming-bubble:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 27px solid transparent;
+    border-right-color: #8f65ff;
+    border-left: 0;
+    border-top: 0;
+    margin-top: -13.5px;
+    margin-left: -27px;
+}
+
+.outgoing-bubble {
+    position: relative;
+    background: #bdbdbd;
+    border-radius: .4em;
+    padding: 20px;
+    z-index: 1;
+}
+
+.outgoing-bubble:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 27px solid transparent;
+    border-left-color: #bdbdbd;
+    border-right: 0;
+    border-bottom: 0;
+    margin-top: -13.5px;
+    margin-right: -27px;
+}
+
+.bubble-poster {
+    color: blue;
+}
+
+.bubble-contents {
+    background-color: white;
+    padding: 10px;
+}
 
 .alert {
     color: #b31919;
@@ -266,6 +360,19 @@ th {
     padding:2px;
     background-color: #47c0e5;
     color: #021870;
+}
+
+.highlight {
+    color: #399ce7;
+    font-weight: bold;
+    padding: 4px;
+}
+
+.highlight-cell {
+    border-left-style: solid;
+    border-width: 3px;
+    border-color: #63ccf2;
+    box-shadow: 0px 0px 9px #6eccf1;
 }
 
 @media screen and (max-width: 600px) {

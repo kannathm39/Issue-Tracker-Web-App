@@ -69,6 +69,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+            $conn->query("SET time_zone = 'Europe/London'");
             $sql = 'SELECT * FROM users';
             $stmt = $conn->prepare($sql);
             $stmt->execute();

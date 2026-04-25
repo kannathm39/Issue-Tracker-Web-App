@@ -69,6 +69,7 @@ catch (Exception $e) {
         $conn = null;
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+            $conn->query("SET time_zone = 'Europe/London'");
             $sql = 'SELECT * FROM users WHERE is_approved != 1';
             $stmt = $conn->prepare($sql);
             $stmt->execute();
@@ -125,6 +126,7 @@ catch (Exception $e) {
             $conn = null;
             try {
                 $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
 
                 $sql = 'UPDATE users SET is_approved = 1 WHERE user_id = ?';
                 $stmt = $conn->prepare($sql);
@@ -147,6 +149,7 @@ catch (Exception $e) {
             $conn = null;
             try {
                 $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
 
                 $sql = 'DELETE FROM users WHERE user_id = ?';
                 $stmt = $conn->prepare($sql);

@@ -16,6 +16,8 @@ $hostname = $_ENV['DB_HOST'];
 $database = $_ENV['DB_NAME'];
 $usernameSelect = $_ENV['DB_SELECT_USERNAME'];
 $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
+$usernameInsert = $_ENV['DB_INSERT_USERNAME'];
+$passwordInsert = $_ENV['DB_INSERT_PASSWORD'];
 $usernameUpdate = $_ENV['DB_UPDATE_USERNAME'];
 $passwordUpdate = $_ENV['DB_UPDATE_PASSWORD'];
 $usernameDelete = $_ENV['DB_DELETE_USERNAME'];
@@ -58,6 +60,7 @@ catch (Exception $e) {
                 $conn = null;
                 try {
                     $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                    $conn->query("SET time_zone = 'Europe/London'");
                     $sql = 'SELECT * FROM issues WHERE issue_id = ? AND user_id = ?';
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param('ii', $current_issue, $_SESSION['user_id']);
@@ -120,7 +123,7 @@ catch (Exception $e) {
                             $conn = null;
                             try {
                                 $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
-
+                                $conn->query("SET time_zone = 'Europe/London'");
 
                                 $sql = 'UPDATE issues SET title = ?, category = ?, description = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ? AND user_id = ?';
                                 $stmt = $conn->prepare($sql);
@@ -140,6 +143,7 @@ catch (Exception $e) {
                             $conn = null;
                             try {
                                 $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
                                 $sql = 'UPDATE issues SET is_deleted = 1 WHERE issue_id = ? AND user_id = ?';
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('ii', $issue_id, $_SESSION['user_id']);
@@ -153,11 +157,139 @@ catch (Exception $e) {
                             }
                         }
 
-                        //Show any admin replies
+                        //Add response
+                        if (isset($_POST['submit-response'])) {
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameInsert, $passwordInsert, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $poster_uid = $_SESSION['user_id'];
+
+                                //Escape special characters
+                                $response = $conn->real_escape_string($_POST['response']);
+
+                                //Insert response into comments table
+                                $sql = "INSERT INTO comments (issue_id, response, user_notif, admin_notif, poster_uid, timestamp) VALUES ('$issue_id', '$response', '0', '1', '$poster_uid', CURRENT_TIMESTAMP(6))";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+
+                                //Update issue last_updated timestamp
+                                $conn = null;
+                                try {
+                                    $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                    $conn->query("SET time_zone = 'Europe/London'");
+                                    $sql = "UPDATE issues SET last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param('i', $issue_id);
+                                    $stmt->execute();
+                                    $stmt->close();
+                                    $conn->close();
+                                    echo '<script type="text/javascript"> redirect(\"manage.php?id=\"' . $issue_id . '); </script>';
+
+                                } catch (mysqli_sql_exception $e) {
+                                    echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                                }
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
+                        //Show any responses
                         echo '<h2>Updates</h2>';
+
+                        $conn = null;
+                        try {
+                            $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                            $conn->query("SET time_zone = 'Europe/London'");
+                            $sql = "SELECT * FROM comments WHERE issue_id = ? ORDER BY timestamp ASC";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('i', $issue_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $stmt->close();
+                            $conn->close();
+                            $checking_new = true;
+
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    $poster_uid = htmlspecialchars($row['poster_uid']);
+                                    $response_timestamp = htmlspecialchars($row['timestamp']);
+                                    $user_notif = htmlspecialchars($row['user_notif']);
+
+                                    $conn = null;
+                                    try {
+                                        $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                                        $conn->query("SET time_zone = 'Europe/London'");
+                                        $sql = "SELECT * FROM users WHERE user_id = ?";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param('i', $poster_uid);
+                                        $stmt->execute();
+                                        $poster_results = $stmt->get_result();
+                                        $stmt->close();
+                                        $conn->close();
+
+                                        while ($p_row = $poster_results->fetch_assoc()) {
+                                            $poster_fname = htmlspecialchars($p_row['firstname']);
+                                            $poster_sname = htmlspecialchars($p_row['surname']);
+                                            $poster_username = htmlspecialchars($p_row['username']);
+                                            $poster_admin = htmlspecialchars($p_row['admin']);
+                                        }
+
+                                        //If new response, separate
+                                        if ($checking_new = true) {
+                                            if ($user_notif == 1) {
+                                                echo '<p>--- NEW RESPONSES ---</p>';
+                                                $checking_new = false;
+                                            }
+                                        }
+
+                                        //Check if poster is admin or user
+                                        if ($poster_admin == 1) {
+                                            echo '<div class="incoming-bubble"><div class="bubble-contents"><p class="bubble-poster">★ ' . $poster_fname . ' ' . $poster_sname . '<span style="font-size: 13px; color:#676767;"> || @' . $poster_username . '</span></p><p>' . $response_timestamp . '</p><p>' . htmlspecialchars($row['response']) . '</p></div></div><br>';
+                                        } else {
+                                            echo '<div class="outgoing-bubble"><div class="bubble-contents"><p class="bubble-poster">' . $poster_fname . ' ' . $poster_sname . '<span style="font-size: 13px; color:#676767;"> || @' . $poster_username . '</span></p><p>' . $response_timestamp . '</p><p>' . htmlspecialchars($row['response']) . '</p></div></div><br>';
+                                        }
+
+
+                                    } catch (mysqli_sql_exception $e) {
+                                        echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                                    }
+
+                                }
+                            } else {
+                                echo "<p>No responses yet.</p>";
+                            }
+
+                        } catch (mysqli_sql_exception $e) {
+                            echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                        }
+
+                        //Set user notif field to 0, as the updates have been seen now
+                        $conn = null;
+                        try {
+                            $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                            $conn->query("SET time_zone = 'Europe/London'");
+                            $sql = "UPDATE comments SET user_notif = 0 WHERE issue_id = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('i', $issue_id);
+                            $stmt->execute();
+                            $stmt->close();
+                            $conn->close();
+                        } catch (mysqli_sql_exception $e) {
+                            echo '<div role="alert" class="alert">Unable to access responses. Please try again later.</div>';
+                        }
 
                         //Show add reply option
                         echo '<h2>Add response</h2>';
+                        echo '
+                            <form action="" method="post" target="_self" class="form-db user-form">
+                                <label for="response"> Please write your response below:</label>
+                                <textarea id="response" name="response" rows="5" cols="50"></textarea><br><br>
+                                <input type="submit" name="submit-response" value="Submit">
+                            </form>';
 
                     } else {
                         echo '<a href="index.php"><< Back</a><br><br>';
@@ -178,5 +310,6 @@ catch (Exception $e) {
 
         <?php include '../footer.php'; ?>
     </body>
+    <script src="../../script.js"></script>
 
 </html>

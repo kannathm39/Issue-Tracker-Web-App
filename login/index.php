@@ -48,6 +48,7 @@ catch (Exception $e) {
                     $conn = null;
                     try {
                         $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                        $conn->query("SET time_zone = 'Europe/London'");
 
                         $username = $conn->real_escape_string($_POST['username']);
                         $password = $conn->real_escape_string($_POST['password']);
@@ -94,7 +95,7 @@ catch (Exception $e) {
 
                 <form action="./index.php" method="post" target="_self" class="form-log user-form">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" maxlength="20" required><br>
+                    <input type="text" id="username" name="username" maxlength="32" required><br>
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" maxlength="25" required><br><br>
 
