@@ -81,7 +81,7 @@ catch (Exception $e) {
                         $created_time = $row['created_time'];
                         $last_updated = $row['last_updated'];
 
-                        echo '<h1><a href="index.php">My Issues</a> >> <span style="color:#9f89f1">' . $title . '</span></h1>';
+                        echo '<h1><a href="index.php">My Issues</a> >> <span style="color:#6cbcee">' . $title . '</span></h1>';
 
                         //Make table showing issue information
                         echo '<table class="vertical-table">';
@@ -95,12 +95,14 @@ catch (Exception $e) {
                         echo '<tr><th>Last Updated</th><td>' . $last_updated . '</td></tr>';
                         echo '</table><br>';
 
+                        echo '<div class="issueButtons">';
                         //Show edit button
                         echo '<form action="" method="post" target="_self" class="edit-button-form">';
                         echo '<input type="submit" name="edit" value="Edit" class="edit-button"></form>
                         <form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to delete this issue?\nClick OK to confirm.\');">
                         <input type="submit" name="delete" value="Delete" class="delete-button">
                         </form>';
+                        echo '</div>';
 
                         //Edit form
                         if (isset($_POST['edit'])) {
@@ -214,6 +216,7 @@ catch (Exception $e) {
                             $checking_new = true;
 
                             if ($result->num_rows > 0) {
+                                echo '<div class="response-container">';
                                 while ($row = $result->fetch_assoc()) {
                                     $poster_uid = htmlspecialchars($row['poster_uid']);
                                     $response_timestamp = htmlspecialchars($row['timestamp']);
@@ -259,6 +262,7 @@ catch (Exception $e) {
                                     }
 
                                 }
+                                echo '</div>';
                             } else {
                                 echo "<p>No responses yet.</p>";
                             }

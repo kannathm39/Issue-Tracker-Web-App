@@ -63,7 +63,7 @@ try {
                 <h1>My Account</h1>
                 <?php
                 echo '<table class="vertical-table">';
-                echo '<tr><th>User ID</th><td>' . $user_id . '</td><td></td></tr>';
+                echo '<tr><th>User ID</th><td>' . $user_id . '</td></tr>';
                 echo '<tr><th>Username</th><td>' . $username . '</td></tr>';
                 echo '<tr><th>First name</th><td>' . $firstname . '</td></tr>';
                 echo '<tr><th>Surname</th><td>' . $surname . '</td></tr>';
@@ -73,7 +73,9 @@ try {
                 if ($is_approved != 1) {
                     echo '<p style="color:red;">Your account has not been approved yet. Please wait for an administrator to approve your account before using this application.<br>
                         Once you have been approved, you may edit your account details.</p>';
+                    echo '<div class="profileButtons">';
                 } else {
+                    echo '<div class="profileButtons">';
                     //Edit button
                     echo '<form action="" method="post" target="_self" class="edit-button-form">';
                     echo '<input type="submit" name="edit" value="Edit Details" class="edit-button"></form>';
@@ -88,7 +90,7 @@ try {
                         <input type="submit" name="delete" value="⚠ Delete Account" class="delete-button">
                         </form>';
 
-
+                echo '</div>';
 
                 //Edit form
                 if (isset($_POST['edit'])) {
