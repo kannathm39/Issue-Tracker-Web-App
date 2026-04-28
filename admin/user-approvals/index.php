@@ -44,6 +44,7 @@ catch (Exception $e) {
 <body>
 <?php include '../../nav.php'; ?>
 <div class="body-container">
+    <button class="goBack" onclick="history.back()">Go Back</button>
     <div>
         <h1>Pending User Approvals</h1>
         <p>All user accounts that need to be approved or denied.</p>
@@ -64,6 +65,54 @@ catch (Exception $e) {
         $table_content .= "<th></th>";
         $table_content .= "<th></th>";
         $table_content .= "</tr>";
+
+        //Approve Account
+        if (isset($_POST['approve'])) {
+
+            //Update database
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
+
+                $sql = 'UPDATE users SET is_approved = 1 WHERE user_id = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('i', $_POST['user_id']);
+                $stmt->execute();
+                $stmt->close();
+                $conn->close();
+                header('Location: index.php');
+
+            } catch (mysqli_sql_exception $e) {
+                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+            }
+
+
+        }
+
+        //Permanently Delete Account
+        if (isset($_POST['delete'])) {
+
+            //Update database
+            $conn = null;
+            try {
+                $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
+
+                $sql = 'DELETE FROM users WHERE user_id = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('i', $_POST['user_id']);
+                $stmt->execute();
+                $stmt->close();
+                $conn->close();
+
+
+            } catch (mysqli_sql_exception $e) {
+                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+            }
+            header('Location: index.php');
+
+        }
 
         // SELECT * FROM table and print the result
         $conn = null;
@@ -117,53 +166,6 @@ catch (Exception $e) {
 
         } catch (mysqli_sql_exception $e) {
             echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
-        }
-
-        //Approve Account
-        if (isset($_POST['approve'])) {
-
-            //Update database
-            $conn = null;
-            try {
-                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
-                $conn->query("SET time_zone = 'Europe/London'");
-
-                $sql = 'UPDATE users SET is_approved = 1 WHERE user_id = ?';
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param('i', $_POST['user_id']);
-                $stmt->execute();
-                $stmt->close();
-                $conn->close();
-
-            } catch (mysqli_sql_exception $e) {
-                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
-            }
-            header('Location: index.php');
-
-        }
-
-        //Permanently Delete Account
-        if (isset($_POST['delete'])) {
-
-            //Update database
-            $conn = null;
-            try {
-                $conn = new mysqli($hostname, $usernameDelete, $passwordDelete, $database);
-                $conn->query("SET time_zone = 'Europe/London'");
-
-                $sql = 'DELETE FROM users WHERE user_id = ?';
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param('i', $_POST['user_id']);
-                $stmt->execute();
-                $stmt->close();
-                $conn->close();
-
-
-            } catch (mysqli_sql_exception $e) {
-                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
-            }
-            header('Location: index.php');
-
         }
         ?>
     </div>

@@ -45,8 +45,8 @@ catch (Exception $e) {
 <div class="body-container">
     <button class="goBack" onclick="history.back()">Go Back</button>
     <div>
-        <h1>Issues</h1>
-        <p>View and manage all issues.</p>
+        <h1>My Issues</h1>
+        <p>View and manage all issues assigned to you.</p>
     </div>
     <br>
 
@@ -115,8 +115,9 @@ catch (Exception $e) {
         try {
             $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
             $conn->query("SET time_zone = 'Europe/London'");
-            $sql = 'SELECT * FROM issues ORDER BY last_updated DESC';
+            $sql = 'SELECT * FROM issues WHERE admin_uid = ? ORDER BY last_updated DESC';
             $stmt = $conn->prepare($sql);
+            $stmt->bind_param('i', $_SESSION['user_id']);
             $stmt->execute();
             $result = $stmt->get_result();
             $stmt->close();
@@ -183,7 +184,7 @@ catch (Exception $e) {
                     } else {
                         $table_content .= "<td>Active</td>";
                     }
-                    $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
+                    $table_content .= "<td><a href='../view-issues/manage.php?id=" . $row['issue_id'] . "'><button>View & Edit</button></a></td>";
                     $table_content .= "</tr>";
                 }
             } else {

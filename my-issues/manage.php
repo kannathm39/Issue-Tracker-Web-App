@@ -201,6 +201,7 @@ catch (Exception $e) {
 
                         //Show any responses
                         echo '<h2>Updates</h2>';
+                        $checking_new = true;
 
                         $conn = null;
                         try {
@@ -213,7 +214,6 @@ catch (Exception $e) {
                             $result = $stmt->get_result();
                             $stmt->close();
                             $conn->close();
-                            $checking_new = true;
 
                             if ($result->num_rows > 0) {
                                 echo '<div class="response-container">';
@@ -242,9 +242,9 @@ catch (Exception $e) {
                                         }
 
                                         //If new response, separate
-                                        if ($checking_new = true) {
+                                        if ($checking_new == true) {
                                             if ($user_notif == 1) {
-                                                echo '<p>--- NEW RESPONSES ---</p>';
+                                                echo '<p class="notif-line">NEW RESPONSES</p>';
                                                 $checking_new = false;
                                             }
                                         }

@@ -189,13 +189,23 @@ input[type=submit]:hover {
     justify-content: center;
 }
 
-.issueButtons {
+.manageUserButtons {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     padding:3px;
     gap: 3px;
     justify-content: center;
+}
+
+.issueButtons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding:3px;
+    gap: 3px;
+    justify-content: center;
+    text-align: center;
 }
 
 input.edit-button {
@@ -207,14 +217,17 @@ input.edit-button {
     border: none;
     cursor: pointer;
     border-radius: 3px;;
+    width: 150px;
 }
 
 input.delete-button {
     background-color: #a61a26;
+    width: 150px;
 }
 
 input.m-delete-button {
     background-color: grey;
+    width: 150px;
 }
 
 input.approve-button {
@@ -224,7 +237,6 @@ input.approve-button {
 input.edit-button:hover {background-color: #c0f8ff;}
 
 #search_input {
-    background-image: url('/assets/searchicon.png');
     background-size: 22px 22px;
     background-position: 10px 10px;
     background-repeat: no-repeat;
@@ -233,6 +245,21 @@ input.edit-button:hover {background-color: #c0f8ff;}
     padding: 12px 20px 12px 40px;
     border: 1px solid #ddd;
     margin-bottom: 12px;
+}
+
+.goBack {
+    background-color: white;
+    background-image: url('/assets/back_arrow.webp');
+    background-size: 22px 22px;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    width: 5%;
+    font-size: 10px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ffffff;
+    margin-bottom: 12px;
+    text-align: right;
+    float:right;
 }
 
 select {
@@ -326,7 +353,7 @@ th {
 
 .incoming-bubble {
     position: relative;
-    background: #aec8ff;
+    background: #bdbdbd;
     border-radius: .4em;
     padding: 30px;
     z-index: 1;
@@ -340,7 +367,7 @@ th {
     width: 0;
     height: 0;
     border: 27px solid transparent;
-    border-right-color: #aec8ff;
+    border-right-color: #bdbdbd;
     border-left: 0;
     border-top: 0;
     margin-top: -13.5px;
@@ -349,7 +376,7 @@ th {
 
 .outgoing-bubble {
     position: relative;
-    background: #bdbdbd;
+    background: #aec8ff;
     border-radius: .4em;
     padding: 30px;
     z-index: 1;
@@ -363,7 +390,7 @@ th {
     width: 0;
     height: 0;
     border: 27px solid transparent;
-    border-left-color: #bdbdbd;
+    border-left-color: #aec8ff;
     border-right: 0;
     border-bottom: 0;
     margin-top: -13.5px;
@@ -402,6 +429,52 @@ th {
     background-color: #47c0e5;
     color: #021870;
 }
+
+.notif-line {
+    color: #299ce4;
+}
+
+.notif-line:before {
+    border-color: #1980cd;
+    content: "";
+    display: inline-block;
+    width: 40%;
+    height: 1px;
+    background: linear-gradient(to left, rgb(25, 128, 205), transparent);
+    vertical-align: middle;
+    margin-right: 10px;
+    box-shadow: 0px 0px 9px #6eccf1;
+    margin-left: 15px;
+}
+
+.notif-line:after {
+    border-color: #1980cd;
+    content: "";
+    display: inline-block;
+    width: 40%;
+    height: 1px;
+    background: linear-gradient(to right, rgb(25, 128, 205), transparent);
+    vertical-align: middle;
+    margin-left: 10px;
+    box-shadow: 0px 0px 9px #6eccf1;
+}
+
+/*
+.notif-line:before {
+    max-width: 700px;
+    background: linear-gradient(to right, rgba(71, 192, 229, 0.74), transparent);
+    height: 5px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.notif-line span {
+    background: #fff;
+    padding: 0 10px;
+    position: relative;
+    top: -10px;
+}
+*/
 
 .highlight {
     color: #399ce7;

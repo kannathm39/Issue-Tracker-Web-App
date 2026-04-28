@@ -10,7 +10,7 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
 ?>
 
 <nav>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon-new.png">
     <ul class="nav-bar">
         <li><a href="http://localhost:9090/index.php">Home</a></li>
         <?php
@@ -40,7 +40,54 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
                 echo '<li><a href="http://localhost:9090/my-issues/index.php">My Issues</a></li>';
             }
         } else if (isset($_SESSION['user_id']) && $_SESSION['admin'] == 1) {
-            echo '<li><a href="http://localhost:9090/admin/view-issues/index.php">View Issues</a></li>';
+
+            $conn = null;
+            //Get number of issues for this admin
+            try {
+                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                $conn->query("SET time_zone = 'Europe/London'");
+                $sql = 'SELECT * FROM issues WHERE admin_uid = ? ORDER BY last_updated DESC';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('i', $_SESSION['user_id']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $stmt->close();
+                $conn->close();
+
+                if ($result->num_rows > 0) {
+                    $notif_updates = 0;
+                    //How many comments for this issue?
+                    while ($row = $result->fetch_assoc()) {
+                        $conn = null;
+                        $issue_id = htmlspecialchars($row['issue_id']);
+                        try {
+                            $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
+                            $conn->query("SET time_zone = 'Europe/London'");
+                            $sql = "SELECT * FROM comments WHERE issue_id = ? AND admin_notif = 1";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('i', $issue_id);
+                            $stmt->execute();
+                            $updates_result = $stmt->get_result();
+                            $stmt->close();
+                            $conn->close();
+
+                            if ($updates_result->num_rows > 0) {
+                                $notif_updates = $notif_updates + $updates_result->num_rows;
+                            }
+                        } catch (mysqli_sql_exception $e) {
+                        }
+                    }
+                    if ($notif_updates > 0) {
+                        echo '<li><a href="http://localhost:9090/admin/my-issues/index.php"><span class="notif-circle">' . $notif_updates . '</span> My Issues</a></li>';
+                    } else {
+                        echo '<li><a href="http://localhost:9090/admin/my-issues/index.php">My Issues</a></li>';
+                    }
+
+                }
+            } catch (mysqli_sql_exception $e) {
+                echo '<li><a href="http://localhost:9090/admin/my-issues/index.php">My Issues</a></li>';
+            }
+            echo '<li><a href="http://localhost:9090/admin/view-issues/index.php">All Issues</a></li>';
 
             //Get updates
             $conn = null;
@@ -56,24 +103,13 @@ $passwordSelect = $_ENV['DB_SELECT_PASSWORD'];
 
                 $notif_updates = $result->num_rows;
 
-                $conn = null;
-                $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-                $conn->query("SET time_zone = 'Europe/London'");
-                $sql = "SELECT * FROM comments WHERE admin_notif = 1";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-                $updates_result = $stmt->get_result();
-                $stmt->close();
-                $conn->close();
-
-                $notif_updates = $notif_updates + $updates_result->num_rows;
                 if ($notif_updates != 0) {
-                    echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php"><span class="notif-circle">' . $notif_updates . '</span> Updates</a></li>';
+                    echo '<li><a href="http://localhost:9090/admin/new-issues/index.php"><span class="notif-circle">' . $notif_updates . '</span> New</a></li>';
                 } else {
-                    echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php">Updates</a></li>';
+                    echo '<li><a href="http://localhost:9090/admin/new-issues/index.php">New</a></li>';
                 }
             } catch (mysqli_sql_exception $e) {
-                echo '<li><a href="http://localhost:9090/admin/issue-updates/index.php">Updates</a></li>';
+                echo '<li><a href="http://localhost:9090/admin/new-issues/index.php">New</a></li>';
             }
 
             echo '<li><a href="http://localhost:9090/admin/manage-users/index.php">Manage Users</a></li>';

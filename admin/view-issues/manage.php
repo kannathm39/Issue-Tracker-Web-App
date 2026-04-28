@@ -53,6 +53,7 @@ catch (Exception $e) {
     <body>
         <?php include '../../nav.php'; ?>
         <div class="body-container">
+            <button class="goBack" onclick="history.back()">Go Back</button>
             <div>
                 <?php
 
@@ -82,7 +83,7 @@ catch (Exception $e) {
                         $last_updated = $row['last_updated'];
                         $is_deleted = $row['is_deleted'];
 
-                        echo '<h1><a href="index.php">Issues</a> >> <span style="color:#9f89f1">' . $title . '</span></h1>';
+                        echo '<h1><a href="index.php">Issues</a> >> <span style="color:#6cbcee">' . $title . '</span></h1>';
 
                         //Make table showing issue information
                         echo '<table class="vertical-table">';
@@ -96,20 +97,6 @@ catch (Exception $e) {
                         echo '<tr><th>Last Updated</th><td>' . $last_updated . '</td></tr>';
                         echo '<tr><th>Deletion Status</th><td>' . $is_deleted . '</td></tr>';
                         echo '</table><br>';
-
-                        //Edit button
-                        echo '<form action="" method="post" target="_self" class="edit-button-form">';
-                        echo '<input type="submit" name="edit" value="Edit" class="edit-button"></form>';
-
-                        //Mark as delete button
-                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to mark this issue as deleted?\nClick OK to confirm.\');">
-                        <input type="submit" name="delete" value="Mark as deleted" class="m-delete-button">
-                        </form>';
-
-                        //Permanently delete button
-                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to PERMANENTLY delete this issue?\nClick OK to confirm.\');">
-                        <input type="submit" name="perm-delete" value="⚠ Permanent delete" class="delete-button">
-                        </form>';
 
                         //Edit form
                         if (isset($_POST['edit'])) {
@@ -167,6 +154,25 @@ catch (Exception $e) {
                             }
                         }
 
+                        //Mark as active
+                        if (isset($_POST['activate'])) {
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $sql = 'UPDATE issues SET is_deleted = 0 WHERE issue_id = ?';
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param('i', $issue_id);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+                                header('Location: manage.php?id=' . $issue_id);
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
                         //Permanently Delete
                         if (isset($_POST['perm-delete'])) {
                             $conn = null;
@@ -186,6 +192,129 @@ catch (Exception $e) {
                             }
                         }
 
+                        echo '<div class="issueButtons">';
+                        //Edit button
+                        echo '<form action="" method="post" target="_self" class="edit-button-form">';
+                        echo '<input type="submit" name="edit" value="Edit" class="edit-button"></form>';
+
+                        //Mark as delete button
+                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to mark this issue as deleted?\nClick OK to confirm.\');">
+                        <input type="submit" name="delete" value="Mark as deleted" class="m-delete-button">
+                        </form>';
+
+                        //Mark as active button
+                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to mark this issue as active?\nClick OK to confirm.\');">
+                        <input type="submit" name="activate" value="Mark as active" class="m-delete-button">
+                        </form>';
+
+                        //Permanently delete button
+                        echo '<form action="" method="post" target="_self" class="edit-button-form" onsubmit="return confirm(\'Are you sure you want to PERMANENTLY delete this issue?\nClick OK to confirm.\');">
+                        <input type="submit" name="perm-delete" value="⚠ Permanent delete" class="delete-button">
+                        </form>';
+                        echo '</div>';
+
+                        //STATUS================================================================
+                        if (isset($_POST['in-progress'])) {
+                            //Update database
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $sql = 'UPDATE issues SET status = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?';
+                                $stmt = $conn->prepare($sql);
+                                $new_status = 'In Progress';
+                                $stmt->bind_param('si', $new_status, $issue_id);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+                                header('Location: manage.php?id=' . $issue_id);
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
+                        if (isset($_POST['awaiting-user'])) {
+                            //Update database
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $sql = 'UPDATE issues SET status = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?';
+                                $stmt = $conn->prepare($sql);
+                                $new_status = 'Awaiting User';
+                                $stmt->bind_param('si', $new_status, $issue_id);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+                                header('Location: manage.php?id=' . $issue_id);
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
+                        if (isset($_POST['resolved'])) {
+                            //Update database
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $sql = 'UPDATE issues SET status = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?';
+                                $stmt = $conn->prepare($sql);
+                                $new_status = 'Resolved';
+                                $stmt->bind_param('si', $new_status, $issue_id);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+                                header('Location: manage.php?id=' . $issue_id);
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
+                        if (isset($_POST['closed'])) {
+                            //Update database
+                            $conn = null;
+                            try {
+                                $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
+                                $conn->query("SET time_zone = 'Europe/London'");
+                                $sql = 'UPDATE issues SET status = ?, last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?';
+                                $stmt = $conn->prepare($sql);
+                                $new_status = 'Closed';
+                                $stmt->bind_param('si', $new_status, $issue_id);
+                                $stmt->execute();
+                                $stmt->close();
+                                $conn->close();
+                                header('Location: manage.php?id=' . $issue_id);
+
+                            } catch (mysqli_sql_exception $e) {
+                                echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                            }
+                        }
+
+                        //Status buttons====================================================
+                        echo '<div class="issueButtons">';
+
+                        //In Progress
+                        echo '<form action="" method="post" target="_self" class="edit-button-form">';
+                        echo '<input type="submit" name="in-progress" value="Set: In Progress" class="edit-button"></form>';
+
+                        //Awaiting User
+                        echo '<form action="" method="post" target="_self" class="edit-button-form">';
+                        echo '<input type="submit" name="awaiting-user" value="Set: Awaiting User" class="edit-button"></form>';
+
+                        //Resolved
+                        echo '<form action="" method="post" target="_self" class="edit-button-form">';
+                        echo '<input type="submit" name="resolved" value="Set: Resolved" class="edit-button"></form>';
+
+                        //Closed
+                        echo '<form action="" method="post" target="_self" class="edit-button-form">';
+                        echo '<input type="submit" name="closed" value="Set: Closed" class="edit-button"></form>';
+                        echo '</div>';
+
+                        //======================================================================
                         //Add response
                         if (isset($_POST['submit-response'])) {
                             $conn = null;
@@ -196,6 +325,9 @@ catch (Exception $e) {
 
                                 //Escape special characters
                                 $response = $conn->real_escape_string($_POST['response']);
+                                $new_status = $_POST['status-radio'];
+
+                                echo $new_status;
 
                                 //Insert response into comments table
                                 $sql = "INSERT INTO comments (issue_id, response, user_notif, admin_notif, poster_uid, timestamp) VALUES ('$issue_id', '$response', '1', '0', '$poster_uid', CURRENT_TIMESTAMP(6))";
@@ -204,21 +336,33 @@ catch (Exception $e) {
                                 $stmt->close();
                                 $conn->close();
 
-                                //Update issue last_updated timestamp
+                                //Update issue last_updated timestamp and status
                                 $conn = null;
                                 try {
                                     $conn = new mysqli($hostname, $usernameUpdate, $passwordUpdate, $database);
                                     $conn->query("SET time_zone = 'Europe/London'");
-                                    $sql = "UPDATE issues SET last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?";
-                                    $stmt = $conn->prepare($sql);
-                                    $stmt->bind_param('i', $issue_id);
+
+                                    if ($new_status == "") {
+                                        $sql = "UPDATE issues SET last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param('i', $issue_id);
+                                    } else if ($new_status == "In Progress" || $new_status == "Awaiting User" || $new_status == "Resolved" || $new_status == "Closed") {
+                                        $sql = "UPDATE issues SET last_updated = CURRENT_TIMESTAMP(6), status = ? WHERE issue_id = ?";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param('si', $new_status, $issue_id);
+                                    } else {
+                                        $sql = "UPDATE issues SET last_updated = CURRENT_TIMESTAMP(6) WHERE issue_id = ?";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param('i', $issue_id);
+                                    }
                                     $stmt->execute();
                                     $stmt->close();
                                     $conn->close();
-                                    echo '<script type="text/javascript"> redirect(\"manage.php?id=\"' . $issue_id . '); </script>';
+                                    header('Location: manage.php?id=' . $issue_id);
 
                                 } catch (mysqli_sql_exception $e) {
                                     echo '<div role="alert" class="alert">Something went wrong. Please try again later.</div>';
+                                    echo "Failed to connect to MySQL: " . $conn->connect_error;
                                 }
 
                             } catch (mysqli_sql_exception $e) {
@@ -228,6 +372,7 @@ catch (Exception $e) {
 
                         //Show any responses
                         echo '<h2>Updates</h2>';
+                        $checking_new = true;
 
                         $conn = null;
                         try {
@@ -242,11 +387,11 @@ catch (Exception $e) {
                             $conn->close();
 
                             if ($result->num_rows > 0) {
+                                echo '<div class="response-container">';
                                 while ($row = $result->fetch_assoc()) {
                                     $poster_uid = htmlspecialchars($row['poster_uid']);
                                     $response_timestamp = htmlspecialchars($row['timestamp']);
                                     $admin_notif = htmlspecialchars($row['admin_notif']);
-                                    $checking_new = true;
 
                                     $conn = null;
                                     try {
@@ -268,9 +413,9 @@ catch (Exception $e) {
                                         }
 
                                         //If new response, separate
-                                        if ($checking_new = true) {
+                                        if ($checking_new == true) {
                                             if ($admin_notif == 1) {
-                                                echo '<p>--- NEW RESPONSES ---</p>';
+                                                echo '<p class="new-response-line">--- NEW RESPONSES ---</p>';
                                                 $checking_new = false;
                                             }
                                         }
@@ -288,6 +433,7 @@ catch (Exception $e) {
                                     }
 
                                 }
+                                echo '</div>';
                             } else {
                                 echo "<p>No responses yet.</p>";
                             }
@@ -317,6 +463,19 @@ catch (Exception $e) {
                             <form action="" method="post" target="_self" class="form-db user-form">
                                 <label for="response"> Please write your response below:</label>
                                 <textarea id="response" name="response" rows="5" cols="50"></textarea><br><br>
+                                
+                                <label for="in-progress" style="float:left;">Set issue as In Progress</label>
+                                <input type="radio" id="in-progress" name="status-radio" value="In Progress"><br>
+                                
+                                <label for="awaiting-user" style="float:left;">Set issue as Awaiting User</label>
+                                <input type="radio" id="awaiting-user" name="status-radio" value="Awaiting User"><br>
+                                
+                                <label for="resolved" style="float:left;">Set issue as Resolved</label>
+                                <input type="radio" id="resolved" name="status-radio" value="Resolved"><br>
+                                
+                                <label for="closed" style="float:left;">Set issue as Closed</label>
+                                <input type="radio" id="closed" name="status-radio" value="Closed"><br>
+                                
                                 <input type="submit" name="submit-response" value="Submit">
                             </form>';
 

@@ -80,6 +80,11 @@ try {
                     echo '<form action="" method="post" target="_self" class="edit-button-form">';
                     echo '<input type="submit" name="edit" value="Edit Details" class="edit-button"></form>';
 
+                    //Change password
+                    if (isset($_POST['changepass'])) {
+                        header('Location: change-password.php');
+                    }
+
                     //Change password button
                     echo '<form action="" method="post" target="_self" class="edit-button-form">';
                     echo '<input type="submit" name="changepass" value="Change Password" class="edit-button"></form>';

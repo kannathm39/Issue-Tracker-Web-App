@@ -44,9 +44,10 @@ catch (Exception $e) {
 <body>
 <?php include '../../nav.php'; ?>
 <div class="body-container">
+    <button class="goBack" onclick="history.back()">Go Back</button>
     <div>
-        <h1>Issue Updates</h1>
-        <p>Issues that have been updated or require admin response.</p>
+        <h1>New Issues</h1>
+        <p>New issues require admin assignment.</p>
     </div>
     <br>
 
@@ -64,18 +65,6 @@ catch (Exception $e) {
         $conn->close();
 
         $notif_unassigned = $result->num_rows;
-
-        $conn = null;
-        $conn = new mysqli($hostname, $usernameSelect, $passwordSelect, $database);
-        $conn->query("SET time_zone = 'Europe/London'");
-        $sql = "SELECT * FROM comments WHERE admin_notif = 1";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $updates_result = $stmt->get_result();
-        $stmt->close();
-        $conn->close();
-
-        $notif_updates = $updates_result->num_rows;
 
         echo '<h2><span class="notif-circle">' . $notif_unassigned . '</span> Unassigned Issues</h2>';
     } catch (mysqli_sql_exception $e) {
@@ -145,7 +134,7 @@ catch (Exception $e) {
                     } else {
                         $table_content .= "<td>Active</td>";
                     }
-                    $table_content .= "<td><a href='manage.php?id=" . $row['issue_id'] . "'><button>Assign Admin</button></a></td>";
+                    $table_content .= "<td><a href='assign.php?id=" . $row['issue_id'] . "'><button>Assign Admin</button></a></td>";
                     $table_content .= "</tr>";
                 }
             } else {
@@ -163,15 +152,18 @@ catch (Exception $e) {
         ?>
     </div>
 
-    <h2><?php echo '<span class="notif-circle">' . $notif_updates . '</span>'?> Updated Issues</h2>
-    <p>Issue Status Types</p>
+    <p>Issue Status Lifecycle</p>
     <ol>
         <li>Awaiting Admin</li>
-        <li>Ongoing</li>
+        <li>Open</li>
+        <li>In Progress</li>
+        <li>Awaiting User</li>
         <li>Resolved</li>
         <li>Closed</li>
     </ol>
     <p>Notifications for updates works on responses.</p>
+
+
 
 
 </div>
